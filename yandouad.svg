@@ -1,20 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="180px" height="60px" viewBox="0 0 180 60" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
-    <title>Group 4</title>
+    <!-- Generator: Sketch 50 (54983) - http://www.bohemiancoding.com/sketch -->
+    <title>yandouad</title>
     <desc>Created with Sketch.</desc>
     <defs></defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Group-4">
-            <rect id="Rectangle-14" fill="#444444" x="0" y="0" width="180" height="60" rx="30"></rect>
+        <g id="yandouad" fill-rule="nonzero">
+            <rect id="Rectangle-14" fill="#444444" x="0" y="0" width="180" height="60" rx="3"></rect>
             <g id="Group-6" transform="translate(12.000000, 10.000000)">
-                <g id="Group-7" transform="translate(6.244953, 14.697174)"></g>
-                <g id="烟斗-[转换]" transform="translate(3.499327, 2.799462)">
-                    <g id="Group"></g>
-                </g>
                 <circle id="Oval" fill="#FFFFFF" cx="20" cy="20" r="20"></circle>
                 <polygon id="Shape" fill="#444444" transform="translate(15.397039, 20.484522) rotate(1.000000) translate(-15.397039, -20.484522) " points="6.3526245 20.6663574 10.3007567 26.1103634 12.3703749 26.0912757 15.9434142 23.4601903 24.4414536 15.0435301 24.2452668 14.858681 14.4135638 20.6683667 11.5185379 17.6334263"></polygon>
-                <polygon id="Shape" fill="#444444" transform="translate(24.538261, 20.480005) scale(-1, 1) rotate(1.000000) translate(-24.538261, -20.480005) " points="15.493846 20.66184 19.4419782 26.1058459 21.5115964 26.0867583 25.0846357 23.4556729 33.5826751 15.0390126 33.3864883 14.8541636 23.5547853 20.6638492 20.6597594 17.6289088"></polygon>
+                <polygon id="Shape" fill="#444444" transform="translate(24.538261, 20.480005) scale(-1, 1) rotate(1.000000) translate(-24.538261, -20.480005) " points="15.4938469 20.66184 19.4419791 26.1058459 21.5115973 26.0867583 25.0846366 23.4556729 33.582676 15.0390126 33.3864892 14.8541636 23.5547862 20.6638492 20.6597603 17.6289088"></polygon>
                 <polygon id="Shape" fill="#444444" points="8.54525632 15.255658 9.18461334 14.1770712 7.23683236 13.0224606 5.42571691 10.4946712 4.81488138 11.5245553 5.78936608 12.8573465 4.14819125 12.6494691 3.51121101 13.7209287 6.59747533 14.1010474"></polygon>
                 <path d="M9.51974101,10.7013607 L8.14357848,8.76750681 L9.9927226,10.2511576 L9.51974101,10.7013607 Z M9.75266662,13.129369 L10.6463404,12.2776655 L10.0842291,11.4532831 L10.7544844,10.8153963 L11.5518981,11.4140833 L12.4622094,10.5481254 L8.11743377,7.65803534 L7.09422484,8.63208953 L9.75266662,13.129369 Z" id="Shape" fill="#444444"></path>
                 <polygon id="Shape" fill="#444444" points="12.5453971 10.4744774 13.6078231 9.9090508 12.0973719 7.42758837 14.3374982 9.51824126 15.4605324 8.9195543 13.0112483 4.32962092 11.93575 4.90336259 13.4973023 7.47866683 11.2060749 5.29298426 10.096113 5.884544"></polygon>
