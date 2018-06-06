@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://www.zhuke.net/about/index.html</loc>
+    
+    <lastmod>2018-06-06T05:33:20.878Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://www.zhuke.net/2018/05/24/ideayn/</loc>
     
     <lastmod>2018-05-24T06:50:15.894Z</lastmod>
@@ -12,13 +19,6 @@
     <loc>http://www.zhuke.net/2018/04/27/data-visualization/</loc>
     
     <lastmod>2018-05-02T08:14:09.508Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://www.zhuke.net/about/index.html</loc>
-    
-    <lastmod>2018-04-25T09:26:39.877Z</lastmod>
     
   </url>
   
