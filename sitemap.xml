@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://www.zhuke.net/about/index.html</loc>
+    
+    <lastmod>2019-07-23T14:51:03.310Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://www.zhuke.net/2019/07/23/pi-network/</loc>
     
     <lastmod>2019-07-23T09:35:32.875Z</lastmod>
@@ -40,13 +47,6 @@
     <loc>http://www.zhuke.net/2018/03/23/banna-food/</loc>
     
     <lastmod>2019-07-19T12:52:25.626Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://www.zhuke.net/about/index.html</loc>
-    
-    <lastmod>2019-07-19T12:42:55.984Z</lastmod>
     
   </url>
   
