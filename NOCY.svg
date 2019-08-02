@@ -5,12 +5,12 @@
     <desc>Created with Sketch.</desc>
     <defs>
         <rect id="path-1" x="0" y="0" width="180" height="60" rx="3"></rect>
-        <linearGradient x1="37.075773%" y1="50%" x2="58.3286684%" y2="15.3181052%" id="linearGradient-3">
+        <linearGradient x1="37.1198464%" y1="50%" x2="58.3002665%" y2="15.3181052%" id="linearGradient-3">
             <stop stop-color="#1904E6" offset="0%"></stop>
             <stop stop-color="#0E67EE" offset="100%"></stop>
         </linearGradient>
-        <polygon id="path-4" points="0.588 548 219.293903 392.6058 441 543.559936 441 0 0 0"></polygon>
-        <filter x="-7.4%" y="-7.4%" width="114.8%" height="114.8%" filterUnits="objectBoundingBox" id="filter-6">
+        <polygon id="path-4" points="0.362666667 339 135.256103 242.871106 272 336.253318 272 0 0 0"></polygon>
+        <filter x="-12.0%" y="-11.9%" width="123.8%" height="123.7%" filterUnits="objectBoundingBox" id="filter-6">
             <feOffset dx="0" dy="42" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
             <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
             <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
@@ -28,36 +28,24 @@
                 </mask>
                 <use id="蒙版" fill="#ED2630" fill-rule="nonzero" xlink:href="#path-1"></use>
                 <g mask="url(#mask-2)">
-                    <g transform="translate(-132.000000, -344.000000)">
-                        <rect id="Mask" fill="url(#linearGradient-3)" fill-rule="nonzero" x="1.25937031" y="0" width="441" height="785"></rect>
-                        <rect id="Mask" fill="" fill-rule="nonzero" transform="translate(221.759370, 392.500000) scale(-1, 1) translate(-221.759370, -392.500000) " x="1.25937031" y="0" width="441" height="785"></rect>
-                        <g id="编组-7" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(0.259370, 0.000000)">
+                    <g transform="translate(-47.350318, -44.000000)">
+                        <rect id="Mask" fill="url(#linearGradient-3)" fill-rule="nonzero" x="1.35031847" y="0" width="272" height="485"></rect>
+                        <rect id="Mask" fill="" fill-rule="nonzero" transform="translate(137.350318, 242.500000) scale(-1, 1) translate(-137.350318, -242.500000) " x="1.35031847" y="0" width="272" height="485"></rect>
+                        <g id="编组-7" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(0.350318, 0.000000)">
                             <mask id="mask-5" fill="white">
                                 <use xlink:href="#path-4"></use>
                             </mask>
                             <g id="蒙版"></g>
                             <g filter="url(#filter-6)" opacity="0.100000001" mask="url(#mask-5)" id="椭圆形" stroke="#FFFFFF">
-                                <g transform="translate(-387.492000, -216.610097)">
-                                    <ellipse cx="608.286" cy="608.92159" rx="23.226" ry="23.2502685"></ellipse>
-                                    <ellipse cx="608.286" cy="608.92159" rx="11.466" ry="11.4779807"></ellipse>
-                                    <ellipse cx="608.286" cy="608.92159" rx="34.986" ry="35.0225564"></ellipse>
-                                    <ellipse cx="608.286" cy="608.92159" rx="46.746" ry="46.7948443"></ellipse>
-                                    <ellipse cx="608.286" cy="608.92159" rx="46.746" ry="46.7948443"></ellipse>
-                                    <ellipse cx="608.286" cy="608.92159" rx="58.506" ry="58.5671321"></ellipse>
-                                    <ellipse cx="608.286" cy="608.92159" rx="82.026" ry="82.1117078"></ellipse>
-                                    <ellipse cx="608.286" cy="608.92159" rx="111.426" ry="111.542427"></ellipse>
-                                    <ellipse cx="608.286" cy="608.92159" rx="155.526" ry="155.688507"></ellipse>
-                                    <ellipse cx="608.286" cy="608.92159" rx="220.206" ry="220.43609"></ellipse>
-                                    <ellipse cx="608.286" cy="608.92159" rx="305.466" ry="305.785177"></ellipse>
-                                    <ellipse cx="608.286" cy="608.92159" rx="396.606" ry="397.020408"></ellipse>
-                                    <ellipse cx="608.286" cy="608.92159" rx="496.566" ry="497.084855"></ellipse>
-                                    <ellipse cx="608.286" cy="608.92159" rx="552.426" ry="553.003222"></ellipse>
-                                    <ellipse cx="608.286" cy="608.92159" rx="608.286" ry="608.92159"></ellipse>
-                                    <ellipse cx="608.286" cy="608.92159" rx="82.026" ry="82.1117078"></ellipse>
+                                <g transform="translate(-238.997333, -133.997852)">
+                                    <ellipse cx="375.178667" cy="376.686896" rx="188.405333" ry="189.162728"></ellipse>
+                                    <ellipse cx="375.178667" cy="376.686896" rx="244.618667" ry="245.602041"></ellipse>
+                                    <ellipse cx="375.178667" cy="376.686896" rx="306.272" ry="307.503222"></ellipse>
+                                    <ellipse cx="375.178667" cy="376.686896" rx="340.725333" ry="342.095059"></ellipse>
+                                    <ellipse cx="375.178667" cy="376.686896" rx="375.178667" ry="376.686896"></ellipse>
                                 </g>
                             </g>
                         </g>
-                        <g id="Nipic_22841093_20190417213123035000" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(1.259370, 392.000000)"></g>
                     </g>
                 </g>
             </g>
