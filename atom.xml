@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://www.zhuke.net/"/>
-  <updated>2019-08-08T01:51:14.729Z</updated>
+  <updated>2019-08-08T02:01:40.555Z</updated>
   <id>http://www.zhuke.net/</id>
   
   <author>
@@ -18,10 +18,10 @@
   
   <entry>
     <title>EOS/BOS 节点 NOCY.COM</title>
-    <link href="http://www.zhuke.net/2019/08/17/nocy.com/"/>
-    <id>http://www.zhuke.net/2019/08/17/nocy.com/</id>
-    <published>2019-08-17T06:44:35.000Z</published>
-    <updated>2019-08-08T01:51:14.729Z</updated>
+    <link href="http://www.zhuke.net/2019/08/07/nocy.com/"/>
+    <id>http://www.zhuke.net/2019/08/07/nocy.com/</id>
+    <published>2019-08-07T06:44:35.000Z</published>
+    <updated>2019-08-08T02:01:40.555Z</updated>
     
     <content type="html"><![CDATA[<p><img src="https://zk.zhibi.com/2019-08-07-103500.png" alt="NOCY"></p><p>我们的节点NOCY.COM上线了，当前排名:</p><ul><li>EOS: 81</li><li>BOS: 33</li></ul><p>欢迎为我们投票，投票地址:</p><p>官网地址: <a href="https://nocy.com/%5D" target="_blank" rel="noopener">https://nocy.com/</a></p><p>EOS <a href="https://www.eosx.io/tools/vote?voteTo=nocy" target="_blank" rel="noopener">https://www.eosx.io/tools/vote?voteTo=nocy</a></p><p>BOS <a href="https://bos.eosx.io/tools/vote?voteTo=nocy.com" target="_blank" rel="noopener">https://bos.eosx.io/tools/vote?voteTo=nocy.com</a></p>]]></content>
     
@@ -39,13 +39,44 @@
     </summary>
     
     
+      <category term="区块链" scheme="http://www.zhuke.net/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/"/>
+    
       <category term="节点" scheme="http://www.zhuke.net/tags/%E8%8A%82%E7%82%B9/"/>
     
       <category term="EOS" scheme="http://www.zhuke.net/tags/EOS/"/>
     
       <category term="BOS" scheme="http://www.zhuke.net/tags/BOS/"/>
     
-      <category term="NOCY.COM" scheme="http://www.zhuke.net/tags/NOCY-COM/"/>
+      <category term="NOCY" scheme="http://www.zhuke.net/tags/NOCY/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>BOS 3s LIB主网升级</title>
+    <link href="http://www.zhuke.net/2019/08/07/bos3slib/"/>
+    <id>http://www.zhuke.net/2019/08/07/bos3slib/</id>
+    <published>2019-08-07T06:44:35.000Z</published>
+    <updated>2019-08-08T02:05:09.567Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="https://zk.zhibi.com/2019-08-08-020112.png" alt="posters2"></p><p>今天BOS主网交易时间从分钟级一跃进入到秒级时代，将给区块链带来新的变革。</p><p>据了解，目前可以在1是进LIB，比预期的3是效果更好，对社区的推动也是值得肯定的，可惜这个币价…………</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;&lt;img src=&quot;https://zk.zhibi.com/2019-08-08-020112.png&quot; alt=&quot;posters2&quot;&gt;&lt;/p&gt;
+&lt;p&gt;今天BOS主网交易时间从分钟级一跃进入到秒级时代，将给区块链带来新的变革。&lt;/p&gt;
+&lt;p&gt;据了解，目前可以在1是进LIB
+      
+    
+    </summary>
+    
+    
+      <category term="区块链" scheme="http://www.zhuke.net/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/"/>
+    
+      <category term="BOS" scheme="http://www.zhuke.net/tags/BOS/"/>
+    
+      <category term="3s" scheme="http://www.zhuke.net/tags/3s/"/>
     
   </entry>
   
