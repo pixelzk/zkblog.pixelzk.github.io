@@ -1,0 +1,8 @@
+.album-content{margin-top:64px;padding-top:38px;border-top:1px solid rgba(255,255,255,.14);display:grid;grid-template-columns:minmax(240px,.55fr) minmax(0,1fr);gap:28px;align-items:start}
+.album-content-head{position:sticky;top:92px;display:block;margin:0}
+.album-content h2{margin:10px 0 0;font-size:clamp(42px,5vw,76px);line-height:.88;font-weight:1000}
+.album-content-date{display:block;margin-top:18px;color:var(--yellow);font-size:12px;font-weight:1000;white-space:nowrap}
+.track-list{border:1px solid rgba(255,255,255,.14);border-radius:8px;overflow:hidden;background:rgba(0,0,0,.36);backdrop-filter:blur(12px)}
+.track{min-height:64px;display:grid;grid-template-columns:46px minmax(0,1fr) auto;gap:14px;align-items:center;padding:0 18px;border-bottom:1px solid rgba(255,255,255,.1)}
+.track:last-child{border-bottom:0}.track span{color:var(--yellow);font-size:11px;font-weight:1000}.track strong{font-size:16px;line-height:1.25;overflow-wrap:anywhere}.track time{color:var(--muted);font-size:12px;font-weight:800}
+@media(max-width:860px){.album-content{margin-top:42px;padding-top:30px;grid-template-columns:1fr;gap:24px}.album-content-head{position:static}.track{grid-template-columns:34px minmax(0,1fr) auto;padding:0 12px;gap:10px}.track strong{font-size:14px}}
