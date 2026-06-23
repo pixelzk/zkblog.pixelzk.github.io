@@ -26,6 +26,11 @@
     .video-bg { position:fixed; inset:0; z-index:0; overflow:hidden; background:#050505 url("https://image.mux.com/5uKYpkz6hDkTGgC4ujlkG8d01DxdpU00l01y1rbHaXlNCw/thumbnail.jpg?time=4&width=1920&fit_mode=smartcrop") center bottom/cover no-repeat; pointer-events:none; }
     .video-bg video { width:100%; height:100%; object-fit:cover; object-position:center bottom; filter:brightness(1.65) saturate(1.18) contrast(1.03); opacity:1; }
     .video-shade { position:absolute; inset:0; background:transparent; }
+    .video-progress { --video-buffer:0%; position:fixed; left:0; right:0; bottom:0; z-index:83; height:3px; overflow:hidden; background:rgba(255,255,255,.08); opacity:0; visibility:hidden; pointer-events:none; transition:opacity .24s var(--ease),visibility .24s var(--ease); }
+    .video-progress.is-active { opacity:1; visibility:visible; }
+    .video-progress-bar { width:var(--video-buffer); height:100%; background:linear-gradient(90deg,var(--yellow),#fff 76%,var(--yellow)); box-shadow:0 -2px 14px rgba(255,255,0,.5); transition:width .24s var(--ease); }
+    .video-progress.is-indeterminate .video-progress-bar { width:32%; animation:videoBufferSweep 1.15s var(--ease) infinite; }
+    @keyframes videoBufferSweep { from { transform:translateX(-110%); } to { transform:translateX(330%); } }
     .noise { position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.34; background-image:linear-gradient(rgba(255,255,255,.105) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.09) 1px,transparent 1px); background-size:200px 200px; background-position:center top; mask-image:linear-gradient(180deg,#000 0%,#000 82%,transparent 100%); }
 
     .topbar { position:fixed; top:18px; left:18px; right:18px; z-index:80; display:flex; align-items:center; justify-content:space-between; pointer-events:none; }
@@ -1557,6 +1562,7 @@
 </head>
 <body>
   <div class="video-bg" aria-hidden="true"><video id="bgVideo" crossorigin="anonymous" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="https://image.mux.com/5uKYpkz6hDkTGgC4ujlkG8d01DxdpU00l01y1rbHaXlNCw/thumbnail.jpg?time=4&width=1920&fit_mode=smartcrop" data-hls="https://stream.mux.com/5uKYpkz6hDkTGgC4ujlkG8d01DxdpU00l01y1rbHaXlNCw.m3u8?min_resolution=1080p&amp;max_resolution=1080p"></video><div class="video-shade"></div></div>
+  <div class="video-progress is-active is-indeterminate" id="videoProgress" aria-hidden="true"><div class="video-progress-bar"></div></div>
   <div class="noise" aria-hidden="true"></div>
   <div class="podium-field background-art-layer" aria-hidden="true"><svg class="hero-logo-3d" viewBox="0 0 1264 1570" aria-hidden="true"><path d="M1162.54379,1161.13359 C1132.00762,1170.84225 1106.40714,1171.92702 1082.37957,1180.60513 C1080.75242,1194.11048 1091.65433,1219.54825 1094.36624,1229.79929 C1094.36624,1242.21985 1094.36624,1257.94896 1098.21716,1266.03047 C1143.45191,1266.03047 1182.12381,1210.32772 1165.79808,1161.13359 L1162.54379,1161.13359 Z M523.779292,-9.09494702e-13 C525.40644,0.54238267 527.033589,0.54238267 528.660738,0.54238267 C594.614515,51.9060559 670.385424,97.9001373 714.535402,168.192978 C767.363509,263.923581 785.913009,392.088691 819.161088,495.358421 C831.690137,551.603541 824.584919,594.885706 824.584919,644.62223 C887.284397,686.277247 953.780552,754.454793 991.910076,819.323804 C1012.62912,865.317884 999.55769,858.266905 1049.72811,864.775501 C1075.87097,871.22986 1112.91573,890.701409 1140.73999,880.450371 C1205.55476,873.399392 1273.13568,936.153108 1257.35234,1000.47973 C1282.95281,1051.89765 1220.84996,1129.24146 1196.87663,1161.67598 C1187.60188,1243.84701 1169.59476,1268.74238 1103.64099,1299.54974 C1070.93529,1336.32331 1047.50435,1380.14786 1013.71388,1408.83992 C989.740554,1438.5625 908.003429,1474.25131 908.003429,1492.09571 C945.048184,1612.7217 614.24878,1565.10047 614.24878,1534.29312 C543.901701,1506.68581 468.185031,1487.21426 395.126037,1487.21426 C372.237472,1492.09571 356.99651,1501.85861 340.616543,1503.9739 C324.290814,1487.75664 345.009845,1466.11557 355.911743,1444.52872 C355.36936,1443.98633 354.826978,1443.44395 354.826978,1442.90158 C324.833196,1443.98633 301.402249,1450.44069 275.259387,1453.69499 C235.990855,1446.15587 281.767983,1390.45314 293.754648,1373.63926 C293.212266,1373.09687 292.669883,1372.5545 292.669883,1372.06634 C267.069404,1369.35443 251.231819,1387.19883 234.90609,1384.48692 C219.122744,1355.79486 223.461808,1329.32656 231.109409,1294.18015 C231.651791,1292.553 236.533238,1287.12916 236.533238,1279.5358 C209.847993,1269.28476 144.4366,1304.43119 168.952314,1255.77943 C182.566127,1239.56217 201.115627,1226.0026 222.919425,1211.95488 C222.919425,1208.70058 222.919425,1205.44629 223.461808,1202.24622 C208.763228,1095.12558 202.742777,956.167042 237.075622,846.931099 C238.702772,844.219184 242.553691,837.710588 245.265606,828.001932 C243.096074,824.747633 243.096074,824.747633 225.088957,811.242296 C190.756112,779.838319 162.9861,751.742878 130.822787,717.681224 C55.051878,614.89964 0,504.578932 0,371.532375 C3.79668153,268.262646 20.1766484,169.277743 87.2151913,78.4285861 C91.5542555,73.5471392 142.267068,18.3867845 156.423265,46.5364641 C146.063749,98.9849027 183.650894,153.602873 213.102292,189.83406 C303.029398,277.428919 384.766521,351.518441 398.976956,481.3107 C401.146488,508.375613 406.570319,646.791762 421.86552,661.978487 C432.767419,655.46989 443.669318,648.961294 455.113599,642.506935 C475.23601,632.744042 501.43311,624.120151 527.575972,616.526789 C529.745504,608.933426 509.026473,556.484988 505.229791,544.064417 C467.642647,402.882114 420.184132,272.00509 450.177915,122.741279 C458.910281,101.154435 490.531211,10.7934228 523.779292,-9.09494702e-13 L523.779292,-9.09494702e-13 Z"></path></svg><span class="podium-slice"></span><span class="podium-index">visual release 01</span></div>
 
@@ -1693,6 +1699,7 @@
       const HLS_URL = document.getElementById('bgVideo')?.dataset.hls || 'https://stream.mux.com/5uKYpkz6hDkTGgC4ujlkG8d01DxdpU00l01y1rbHaXlNCw.m3u8?min_resolution=1080p&max_resolution=1080p';
       const START_AT = 8;
       const video = document.getElementById('bgVideo');
+      const videoProgress = document.getElementById('videoProgress');
       const sound = document.getElementById('soundBtn');
       const soundGate = document.getElementById('soundGate');
       const loader = document.getElementById('loader');
@@ -1757,6 +1764,42 @@
           video.src = HLS_URL;
           video.play().catch(() => {});
         }
+      }
+      let videoProgressHideTimer;
+      function showVideoProgress(indeterminate) {
+        if (!videoProgress) return;
+        clearTimeout(videoProgressHideTimer);
+        videoProgress.classList.add('is-active');
+        videoProgress.classList.toggle('is-indeterminate', !!indeterminate);
+      }
+      function updateVideoProgress() {
+        if (!video || !videoProgress) return;
+        const duration = video.duration;
+        if (!Number.isFinite(duration) || duration <= 0 || !video.buffered.length) {
+          showVideoProgress(true);
+          return;
+        }
+        const bufferedEnd = video.buffered.end(video.buffered.length - 1);
+        const bufferedPercent = Math.min(100, Math.max(2, bufferedEnd / duration * 100));
+        videoProgress.style.setProperty('--video-buffer', bufferedPercent.toFixed(2) + '%');
+        showVideoProgress(false);
+      }
+      function hideVideoProgress() {
+        if (!videoProgress) return;
+        videoProgress.classList.remove('is-indeterminate');
+        videoProgress.style.setProperty('--video-buffer', '100%');
+        clearTimeout(videoProgressHideTimer);
+        videoProgressHideTimer = setTimeout(() => videoProgress.classList.remove('is-active'), 320);
+      }
+      if (video) {
+        video.addEventListener('loadstart', () => showVideoProgress(true));
+        video.addEventListener('loadedmetadata', updateVideoProgress);
+        video.addEventListener('progress', updateVideoProgress);
+        video.addEventListener('waiting', updateVideoProgress);
+        video.addEventListener('stalled', () => showVideoProgress(true));
+        video.addEventListener('canplay', hideVideoProgress);
+        video.addEventListener('playing', hideVideoProgress);
+        video.addEventListener('error', hideVideoProgress);
       }
       function setSound(on, blocked) { if (!sound) return; const label = sound.querySelector('.sound-label'); if (label) label.textContent = blocked ? 'TAP' : (on ? 'ON' : 'OFF'); sound.setAttribute('aria-label', blocked ? 'Tap to enable sound' : (on ? 'Sound on' : 'Sound off')); sound.classList.toggle('is-on', !!on && !blocked); }
       function setSoundGate(show) { if (soundGate) soundGate.classList.toggle('show', !!show); }
