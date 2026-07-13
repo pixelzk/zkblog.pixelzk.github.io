@@ -1,0 +1,901 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>UI设计需求确认单</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<style>
+  :root{
+    --bg:#f3f6fb;
+    --card:#fff;
+    --text:#1f2328;
+    --muted:#6b7280;
+    --line:#e5e7eb;
+    --accent:#155eef;
+    --accent-soft:#eff6ff;
+    --radius:18px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:radial-gradient(circle at 15% 0%,#eaf1ff 0,transparent 28%),var(--bg);
+    color:var(--text);
+  }
+  .wrap{max-width:1040px;margin:38px auto;padding:0 24px 80px}
+  .head{margin-bottom:22px;display:flex;justify-content:space-between;align-items:flex-end;gap:20px}.head-tools{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.head-tools button{padding:9px 12px;font-size:13px}
+  .eyebrow{display:inline-flex;align-items:center;gap:7px;color:var(--accent);font-size:12px;font-weight:700;letter-spacing:.08em;margin-bottom:10px}.eyebrow:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 5px rgba(21,94,239,.1)}
+  h1{font-size:32px;letter-spacing:-.02em;margin:0 0 8px}
+  .sub{color:var(--muted);font-size:14px}
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:26px;
+    margin-bottom:18px;
+    box-shadow:0 5px 22px rgba(15,23,42,.045);
+    transition:border-color .2s,box-shadow .2s,transform .2s;
+  }
+  form .card:focus-within{border-color:#b9cdfb;box-shadow:0 10px 30px rgba(21,94,239,.08);transform:translateY(-1px)}
+  .section-title{font-size:17px;font-weight:750;margin:0 0 20px;display:flex;align-items:center;gap:10px}.section-title:after{content:"";height:1px;background:var(--line);flex:1}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .field{display:flex;flex-direction:column;gap:8px}
+  .field.full{grid-column:1/-1}
+  label{font-size:13px;font-weight:600}
+  .field>label:first-child{display:flex;align-items:center;gap:7px;min-height:18px}.field.is-filled>label:first-child:after{content:"✓";display:inline-grid;place-items:center;width:17px;height:17px;border-radius:50%;background:#e7f8ef;color:#07883f;font-size:11px;font-weight:900}.field.is-required>label:first-child:before{content:"必填";order:2;padding:2px 5px;border-radius:4px;background:#fff1f0;color:#d92d20;font-size:9px;font-weight:700;line-height:1.2}.field.is-required.is-filled>label:first-child:after{order:3}.field.is-missing input,.field.is-missing textarea,.field.is-missing .select-trigger,.field.is-missing .size-launch{border-color:#f3b6b2;background-color:#fffafa}.field.is-missing>label:first-child{color:#b42318}
+  input,select,textarea{
+    width:100%;
+    border:1px solid var(--line);
+    border-radius:11px;
+    padding:12px 13px;
+    font:inherit;
+    background:#fff;
+    outline:none;
+  }
+  input[type="color"]{height:40px;padding:3px;cursor:pointer;background:#fff}
+  .color-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+  .color-fields .field{gap:6px}.color-fields label{font-size:12px;color:var(--muted)}
+  .palette{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.swatch{width:32px;height:32px;padding:0;border:2px solid #fff;border-radius:8px;box-shadow:0 0 0 1px var(--line);position:relative}.swatch.selected{box-shadow:0 0 0 2px var(--accent)}.swatch.selected:after{content:"✓";position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-weight:800;text-shadow:0 1px 3px #000}.custom-color-btn{height:32px;padding:0 10px;border:1px solid var(--line);background:#fff;font-size:12px}.custom-picker{width:52px!important;height:32px!important}.color-note{grid-column:1/-1}
+  input:hover,select:hover,textarea:hover{border-color:#c4ccda}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(21,94,239,.1)}
+  input.has-value,select.has-value,textarea.has-value{background-color:#fbfdff;border-color:#cbd8f5}
+  select{appearance:none;-webkit-appearance:none;padding-right:42px;cursor:pointer;background-color:#fff;background-image:linear-gradient(45deg,transparent 50%,#64748b 50%),linear-gradient(135deg,#64748b 50%,transparent 50%),linear-gradient(to right,#e8edf5,#e8edf5);background-position:calc(100% - 19px) 50%,calc(100% - 14px) 50%,calc(100% - 40px) 50%;background-size:5px 5px,5px 5px,1px 22px;background-repeat:no-repeat;transition:border-color .18s,box-shadow .18s,background-color .18s}
+  select:hover{background-color:#fbfdff;background-image:linear-gradient(45deg,transparent 50%,#155eef 50%),linear-gradient(135deg,#155eef 50%,transparent 50%),linear-gradient(to right,#d8e3f6,#d8e3f6)}
+  select:focus{background-color:#fff;background-image:linear-gradient(45deg,transparent 50%,#155eef 50%),linear-gradient(135deg,#155eef 50%,transparent 50%),linear-gradient(to right,#c7d7f5,#c7d7f5)}
+  select option{color:#1f2937;background:#fff;padding:10px}
+  select.customized{position:absolute!important;opacity:0!important;pointer-events:none!important;width:1px!important;height:1px!important}
+  .select-ui{position:relative}.select-trigger{width:100%;min-height:46px;padding:11px 44px 11px 13px;text-align:left;background:#fff;color:var(--text);border:1px solid var(--line);border-radius:11px;box-shadow:none;position:relative}.select-trigger:hover{border-color:#9fb8ed;background:#fbfdff}.select-trigger:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px rgba(21,94,239,.1)}.select-trigger:after{content:"";position:absolute;right:17px;top:50%;width:7px;height:7px;border-right:2px solid #64748b;border-bottom:2px solid #64748b;transform:translateY(-70%) rotate(45deg);transition:.2s}.select-ui.open .select-trigger:after{transform:translateY(-25%) rotate(225deg);border-color:var(--accent)}
+  .select-menu{position:absolute;left:0;right:0;top:calc(100% + 7px);z-index:30;display:none;padding:6px;background:rgba(255,255,255,.98);backdrop-filter:blur(14px);border:1px solid #d9e2ef;border-radius:12px;box-shadow:0 16px 38px rgba(15,23,42,.15);max-height:260px;overflow:auto}.select-ui.open .select-menu{display:block;animation:selectIn .16s ease-out}.select-option{width:100%;padding:10px 11px;border-radius:8px;background:transparent;color:#334155;text-align:left;box-shadow:none}.select-option:hover,.select-option.focused{background:#f1f5ff;color:#155eef;transform:none}.select-option.selected{background:#eaf1ff;color:#155eef;font-weight:700}.select-option.selected:after{content:"✓";float:right;font-weight:800}@keyframes selectIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+  textarea{min-height:92px;resize:vertical}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip input{display:none}
+  .chip span{
+    display:inline-block;
+    padding:8px 12px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    font-size:13px;
+    cursor:pointer;transition:.18s;
+    user-select:none;
+  }
+  .chip input:checked + span{
+    border-color:var(--accent);
+    color:var(--accent);
+    background:var(--accent-soft);
+  }
+  .chip span:hover{border-color:#9fb8ed;transform:translateY(-1px)}
+  .hint{font-size:12px;color:var(--muted)}
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+  button{
+    border:0;
+    border-radius:10px;
+    padding:11px 16px;
+    font:inherit;
+    cursor:pointer;transition:transform .16s,box-shadow .16s,background .16s;
+  }
+  button:hover{transform:translateY(-1px)}button:active{transform:translateY(0)}
+  .primary{background:linear-gradient(135deg,#155eef,#2f75ff);color:#fff;box-shadow:0 6px 14px rgba(21,94,239,.2)}
+  .secondary{background:#eef0f3;color:#222}
+  .ghost{background:#fff;border:1px solid var(--line)}
+  .output{
+    white-space:pre-wrap;
+    background:#0f172a;
+    color:#e2e8f0;
+    border-radius:12px;
+    padding:16px;
+    min-height:180px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:13px;
+    overflow:auto;
+  }
+  .image-result-card{overflow:hidden}.image-generate-state{padding:18px;border:1px solid #dbe5f5;border-radius:12px;background:#f7faff;color:#516078;text-align:center}.image-generate-state b{display:block;color:#1d2939;font-size:15px;margin-bottom:6px}.generated-image-wrap{position:relative;border-radius:14px;overflow:hidden;background:#eef2f7;border:1px solid #dce4ef}.generated-image-wrap img{display:block;width:100%;max-height:1100px;object-fit:contain}.generated-image-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;background:#fff}.generated-image-meta span{font-size:12px;color:#667085}.image-action{background:linear-gradient(135deg,#7c3aed,#155eef);color:#fff;box-shadow:0 7px 18px rgba(86,52,200,.24)}
+  .hidden{display:none}
+  .stepbar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:20px 0 12px}
+  .step{padding:12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.78);color:var(--muted);font-size:12px;text-align:center;transition:.2s}
+  .step.active{border-color:#9db8f5;background:#fff;box-shadow:0 5px 16px rgba(21,94,239,.08)}
+  .step strong{display:block;color:var(--text);font-size:13px;margin-bottom:2px}
+  .upload-zone{border:1.5px dashed #b8c2d2;border-radius:14px;padding:24px;text-align:center;background:#fafbfc;cursor:pointer;transition:.2s}
+  .upload-zone:hover,.upload-zone.drag{border-color:var(--accent);background:var(--accent-soft)}
+  .upload-zone input{display:none}.upload-zone b{display:block;margin-bottom:6px}.upload-zone span{font-size:12px;color:var(--muted)}
+  .preview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+  .preview-item{position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+  .preview-item img{width:100%;height:128px;object-fit:cover;display:block}
+  .preview-meta{padding:9px;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .preview-item button{position:absolute;right:6px;top:6px;width:26px;height:26px;padding:0;border-radius:50%;background:rgba(15,23,42,.78);color:#fff}
+  .status{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:10px;background:#f8fafc;border:1px solid var(--line);font-size:13px}
+  .dot{width:8px;height:8px;border-radius:50%;background:#f59e0b}.status.ready .dot{background:#16a34a}
+  .toolbar{position:sticky;bottom:12px;z-index:5;display:flex;justify-content:space-between;gap:12px;align-items:center;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border:1px solid var(--line);box-shadow:0 10px 35px rgba(15,23,42,.12);border-radius:14px;padding:12px 14px;margin-top:16px}
+  .progress-wrap{position:sticky;top:0;z-index:12;display:flex;align-items:center;gap:12px;margin:0 0 24px;padding:12px 14px;background:rgba(255,255,255,.92);backdrop-filter:blur(14px);border:1px solid rgba(213,221,234,.9);border-radius:12px;box-shadow:0 6px 20px rgba(15,23,42,.07)}.progress-track{height:7px;background:#dfe6f2;border-radius:99px;overflow:hidden;flex:1}.progress-bar{height:100%;width:0;background:linear-gradient(90deg,#155eef,#49a0ff);border-radius:99px;transition:width .35s}.progress-text{font-size:12px;color:var(--muted);font-weight:600;white-space:nowrap}
+  .import-card{position:relative;border-color:#cfe0ff;background:linear-gradient(135deg,#fff,#f7faff);transition:border-color .2s,background .2s,box-shadow .2s,transform .2s}.import-card:after{content:"拖到这里松开即可识别";position:absolute;inset:8px;border:2px dashed #4f7cff;border-radius:13px;background:rgba(239,244,255,.94);color:#155eef;font-size:16px;font-weight:750;display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .18s}.import-card.drop-active{border-color:#4f7cff;background:#f3f7ff;box-shadow:0 14px 35px rgba(21,94,239,.16);transform:translateY(-2px)}.import-card.drop-active:after{opacity:1}.import-card.import-busy{pointer-events:none}.import-card.import-busy .import-row{opacity:.65}.import-row{display:flex;align-items:center;justify-content:space-between;gap:18px}.import-row>.actions{margin-left:auto;justify-content:flex-end;flex-wrap:nowrap;white-space:nowrap}.import-copy{display:flex;align-items:center;gap:14px;min-width:0}.import-icon{width:48px;height:48px;flex:0 0 48px;border-radius:13px;background:#e7efff;color:#155eef;display:grid;place-items:center;font-size:23px;font-weight:800}.import-copy h3{font-size:16px;margin:0 0 5px}.import-copy p{font-size:12px;color:var(--muted);margin:0}.import-formats{display:block;margin-top:4px;color:#98a2b3}.import-result{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}.import-progress{padding:14px;border:1px solid #d7e3fb;border-radius:12px;background:#fff}.import-progress-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.import-progress-title{font-size:14px;font-weight:750;color:#1d2939}.import-progress-percent{font-size:14px;font-weight:800;color:#155eef}.import-progress-detail{font-size:12px;color:#667085;margin-top:5px}.import-progress-track{height:8px;margin-top:13px;border-radius:99px;overflow:hidden;background:#e8eef8}.import-progress-bar{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#155eef,#49a0ff);transition:width .3s ease}.import-progress-steps{display:flex;justify-content:space-between;margin-top:9px;color:#98a2b3;font-size:10px}.import-progress-steps span.active{color:#155eef;font-weight:700}.import-summary{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}.import-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}.import-field{padding:9px 11px;border:1px solid #dfe6f2;border-radius:9px;background:#fff;font-size:12px}.import-field b{color:#667085;margin-right:6px}.import-warn{padding:10px 12px;border-radius:9px;background:#fff8e8;color:#8a5a00;font-size:12px;margin-top:9px}
+  .auth-mask{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:20px;background:rgba(15,23,42,.48);backdrop-filter:blur(8px)}.auth-mask.hidden{display:none}.auth-dialog{width:min(420px,100%);padding:26px;background:#fff;border:1px solid #dce4f0;border-radius:18px;box-shadow:0 28px 80px rgba(15,23,42,.25)}.auth-dialog h3{margin:0 0 7px;font-size:20px}.auth-dialog>p{margin:0 0 20px;color:var(--muted);font-size:13px;line-height:1.6}.auth-fields{display:grid;gap:14px}.auth-error{min-height:18px;margin-top:10px;color:#b42318;font-size:12px}.auth-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:8px}.auth-actions button{min-width:96px}
+  .manager-mask{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:20px;background:rgba(15,23,42,.42);backdrop-filter:blur(7px)}.manager-mask.hidden{display:none}.manager{width:min(840px,100%);max-height:min(760px,90vh);display:flex;flex-direction:column;background:#fff;border-radius:18px;box-shadow:0 28px 80px rgba(15,23,42,.25);overflow:hidden}.manager-head{display:flex;align-items:center;justify-content:space-between;padding:20px 22px;border-bottom:1px solid var(--line)}.manager-head h3{margin:0;font-size:20px}.manager-close{width:36px;height:36px;padding:0;background:#f1f5f9}.manager-tabs{display:flex;gap:8px;padding:12px 22px;border-bottom:1px solid var(--line)}.manager-tabs button.active{background:#eaf1ff;color:#155eef;font-weight:750}.manager-body{padding:18px 22px 24px;overflow:auto}.manager-actions{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px}.manager-note{padding:11px 13px;border-radius:10px;background:#f7f9fc;color:#667085;font-size:12px;line-height:1.6;margin-bottom:14px}.manager-list{display:grid;gap:10px}.manager-item{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:12px}.manager-item img{width:64px;height:54px;object-fit:cover;border-radius:8px;background:#eef2f7}.manager-item-copy{min-width:0}.manager-item-copy b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.manager-item-copy span{display:block;margin-top:4px;color:#98a2b3;font-size:11px}.manager-item-actions{display:flex;gap:6px}.manager-item-actions button{padding:7px 9px;font-size:12px}.manager-empty{padding:36px;text-align:center;color:#98a2b3;border:1px dashed #d8e0ec;border-radius:12px}.paste-hint{margin-left:8px;color:#155eef;font-weight:700}
+  .size-picker{margin-top:24px;padding-top:22px;border-top:1px solid var(--line)}.size-launch{width:100%;display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#f8fafc;border:1px solid #dce4ef;border-radius:12px;color:#172033}.size-launch:hover{background:#f1f6ff;border-color:#a9c0ef}.size-launch-main{display:flex;align-items:center;gap:11px;text-align:left}.size-launch-icon{width:36px;height:36px;border-radius:9px;background:#dff8f4;color:#047c72;display:grid;place-items:center;font-size:18px;font-weight:800}.size-launch-text b{display:block;font-size:14px}.size-launch-text span{font-size:12px;color:var(--muted)}.size-launch-arrow{color:#155eef;font-size:18px}.size-drawer-mask{position:fixed;inset:0;z-index:50;background:rgba(15,23,42,.32);opacity:0;visibility:hidden;transition:.22s}.size-drawer-mask.open{opacity:1;visibility:visible}.size-drawer{position:absolute;right:0;top:0;height:100%;width:min(420px,92vw);background:#fff;box-shadow:-18px 0 46px rgba(15,23,42,.18);transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column}.size-drawer-mask.open .size-drawer{transform:none}.size-drawer-head{padding:20px 22px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}.size-drawer-head h3{margin:0;font-size:19px}.size-drawer-close{width:36px;height:36px;padding:0;border-radius:9px;background:#f1f5f9}.size-drawer-body{padding:16px 22px 28px;overflow:auto;flex:1}.size-category{position:sticky;top:-16px;z-index:5;background:#fff;padding:0 0 12px}.size-group{margin-top:8px}.size-group-title{font-size:12px;color:#344054;font-weight:800;margin-bottom:10px}.size-options{display:grid;grid-template-columns:1fr;gap:7px}.size-option input{display:none}.size-option span{display:flex;align-items:center;gap:9px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:12px;cursor:pointer;transition:.18s;min-height:42px}.size-option span:before{content:"";width:15px;height:15px;flex:0 0 15px;border:1.5px solid #98a2b3;border-radius:4px}.size-option input:checked+span{color:#087f72;border-color:#51c9bb;background:#e9fbf8;font-weight:700}.size-option input:checked+span:before{background:#12b8a6;border-color:#12b8a6;box-shadow:inset 0 0 0 3px #e9fbf8}.custom-size{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}.custom-size input:nth-child(3),.custom-size button{grid-column:1/-1}.custom-size input{min-width:0}.size-drawer-foot{padding:14px 22px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;background:#fff}.size-drawer-foot button{min-width:110px}
+  .size-field{grid-column:2;grid-row:1}
+  .size-option>span{position:relative;min-height:58px;padding:8px;border-color:transparent}.size-option>span:before{display:none}.size-option>span:hover{background:#f7f9fc;border-color:#e0e7f0}.size-option input:checked+span:after{content:"✓";position:absolute;right:7px;top:7px;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:#12b8a6;color:#fff;font-size:11px;font-weight:900}.device-icon{position:relative;flex:0 0 40px;width:40px;height:40px;border-radius:8px;background:#16c7b5}.device-icon:before{content:"";position:absolute;left:10px;top:5px;width:18px;height:28px;border:2px solid #083b36;border-radius:4px;background:#d8fff8}.device-icon.desktop:before,.device-icon.tv:before{left:5px;top:7px;width:27px;height:20px;border-radius:3px}.device-icon.desktop:after,.device-icon.tv:after{content:"";position:absolute;left:17px;top:29px;width:8px;height:4px;border-bottom:2px solid #083b36}.device-icon.tablet:before{left:7px;top:4px;width:24px;height:30px;border-radius:3px}.device-icon.watch,.device-icon.tv{background:#ffbd00}.device-icon.watch:before{left:12px;top:9px;width:14px;height:20px;border-radius:5px}.device-icon.watch:after{content:"";position:absolute;left:15px;top:3px;width:10px;height:34px;border-top:4px solid #083b36;border-bottom:4px solid #083b36}.device-icon.print{background:#ff6b1a}.device-icon.print:before{left:9px;top:5px;width:20px;height:28px;border-radius:2px;background:#fff4ea}.device-icon.share:before{left:9px;top:9px;width:20px;height:20px;border-radius:4px}.device-icon.share:after{content:"↑";position:absolute;left:15px;top:9px;color:#083b36;font-weight:900}.device-icon.icon:before{left:9px;top:9px;width:20px;height:20px;border-radius:6px}.size-copy{display:flex!important;flex-direction:column;align-items:flex-start!important;gap:0!important;min-width:0;padding:0!important;border:0!important;background:transparent!important;min-height:0!important}.size-copy:before{display:none!important}.size-copy b{font-size:12px;color:#253043;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px}.size-copy small{font-size:11px;color:#98a2b3;margin-top:3px}
+  .toolbar .demo-action{margin-right:auto;flex:0 0 auto}.toolbar .actions{justify-content:flex-end;margin-left:auto}.danger-text{color:#b42318}
+  @media (max-width:720px){
+    .grid{grid-template-columns:1fr}.head{align-items:flex-start;flex-direction:column}.head-tools{width:100%;display:grid;grid-template-columns:1fr 1fr}.manager-item{grid-template-columns:52px 1fr}.manager-item img{width:52px;height:48px}.manager-item-actions{grid-column:1/-1;justify-content:flex-end}
+    .field.full{grid-column:auto}
+    .wrap{margin:20px auto}
+    .card{padding:18px}
+    .stepbar{grid-template-columns:1fr 1fr}.preview-grid{grid-template-columns:1fr 1fr}.toolbar{position:static;display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}.toolbar .demo-action{grid-column:1/-1;width:100%;margin:0;min-height:46px}.toolbar .actions{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin:0}.toolbar .actions button{width:100%;min-height:46px;padding:10px 8px}.toolbar .actions button:nth-last-child(2),.toolbar .actions button:last-child{grid-column:1/-1}.color-fields{grid-template-columns:1fr 1fr}.color-fields .field:last-child{grid-column:1/-1}
+    .size-options{grid-template-columns:1fr}.custom-size{grid-template-columns:1fr 1fr}.custom-size input:nth-child(3),.custom-size button{grid-column:1/-1}.size-field{grid-column:auto;grid-row:auto}
+    .import-row{align-items:stretch;flex-direction:column}.import-row>.actions{display:grid;grid-template-columns:1fr 1fr;width:100%}.import-row>.actions button{width:100%;padding:10px 8px}.import-fields{grid-template-columns:1fr}
+  }
+  @media print{body{background:#fff}.wrap{max-width:none;margin:0;padding:0}.actions,.toolbar,.upload-zone,.stepbar{display:none!important}.card{box-shadow:none;break-inside:avoid}.output{background:#f8fafc;color:#111;border:1px solid var(--line)}input,select,textarea{border:0;padding-left:0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div><div class="eyebrow">KBIT DESIGN WORKFLOW</div><h1>UI设计需求确认单</h1><div class="sub">KBIT AI Design Brief · 用于生成 design.md 与高保真页面</div></div><div class="head-tools"><button type="button" class="ghost" onclick="openManager('tasks')">任务管理</button><button type="button" class="ghost" onclick="openManager('assets')">资产管理</button></div>
+  </div>
+  <div class="progress-wrap"><div class="progress-track"><div id="progressBar" class="progress-bar"></div></div><span id="progressText" class="progress-text">已填写 0%</span></div>
+  <div class="stepbar">
+    <div class="step"><strong>01 基础需求</strong>项目背景与页面内容</div>
+    <div class="step"><strong>02 设计设定</strong>平台、视觉与参考图</div>
+    <div class="step"><strong>03 整理下载</strong>导出图片、表格或文档</div>
+    <div class="step"><strong>04 AI 生成</strong>design.md 与高保真稿</div>
+  </div>
+
+  <form id="uiForm">
+    <section id="smartImportZone" class="card import-card"><div class="import-row"><div class="import-copy"><div class="import-icon">⇧</div><div><h3>智能导入需求</h3><p>点击、拖拽或直接粘贴文件与截图<span class="paste-hint">⌘/Ctrl + V</span><span class="import-formats">支持 Excel、CSV、JSON、TXT、Markdown、PDF、Word、原型截图与粘贴板文字 · 最多 10 个，单个不超过 12MB</span></p></div></div><div class="actions"><button type="button" class="ghost" onclick="pasteSmartImport()">从粘贴板导入</button><button type="button" class="primary" onclick="document.getElementById('smartImport').click()">选择文件识别</button></div><input id="smartImport" type="file" class="hidden" multiple accept=".xls,.xlsx,.csv,.json,.txt,.md,.html,.pdf,.doc,.docx,image/png,image/jpeg,image/webp"></div><div id="importResult" class="import-result hidden"></div></section>
+    <section class="card">
+      <h2 class="section-title">1. 基础信息</h2>
+      <div class="grid">
+        <div class="field">
+          <label>项目名称</label>
+          <input id="projectName" placeholder="例如：晋宁文化旅游平台">
+        </div>
+        <div class="field">
+          <label>产品名称 / 主题 / Logo 名称</label>
+          <input id="productName" placeholder="例如：乐享湖滨春城">
+        </div>
+        <div class="field full">
+          <label>小标题 / 口号 / 宣传语</label>
+          <input id="slogan" placeholder="没有可不填">
+        </div>
+        <div class="field full">
+          <label>摘要 / 一句话说明</label>
+          <textarea id="summary" placeholder="说明是什么、给谁用、解决什么问题"></textarea>
+        </div>
+        <div class="field">
+          <label>所属行业</label>
+          <select id="industry">
+            <option>政务</option><option>文旅</option><option>教育</option><option>医疗</option>
+            <option>企业服务</option><option>电商</option><option>金融</option><option>媒体</option><option>其他</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>设计类型</label>
+          <select id="designType">
+            <option value="miniapp">微信 / 支付宝小程序</option>
+            <option value="nativeapp">原生 APP（iOS / Android）</option>
+            <option value="web">Web 网站 / Web 应用</option>
+            <option value="h5">H5 / 活动页</option>
+            <option value="page">单个页面</option>
+            <option value="logo">Logo</option>
+            <option value="icon">Icon</option>
+            <option value="banner">数字 Banner / 社交配图</option>
+            <option value="print">平面设计 / 印刷品 / 海报</option>
+            <option value="dashboard">大屏 / 数据可视化</option>
+            <option value="ppt">PPT / 演示文稿</option>
+            <option value="system">组件 / Design System</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">2. 类型信息</h2>
+      <div id="dynamicFields" class="grid"></div>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">3. 视觉方向</h2>
+      <div class="field full">
+        <label>整体风格</label>
+        <div class="chips" data-group="style">
+          <label class="chip"><input type="checkbox" value="现代简约"><span>现代简约</span></label>
+          <label class="chip"><input type="checkbox" value="现代国风"><span>现代国风</span></label>
+          <label class="chip"><input type="checkbox" value="科技"><span>科技</span></label>
+          <label class="chip"><input type="checkbox" value="商务"><span>商务</span></label>
+          <label class="chip"><input type="checkbox" value="年轻化"><span>年轻化</span></label>
+          <label class="chip"><input type="checkbox" value="高级感"><span>高级感</span></label>
+          <label class="chip"><input type="checkbox" value="极简"><span>极简</span></label>
+          <label class="chip"><input type="checkbox" value="插画"><span>插画</span></label>
+          <label class="chip"><input type="checkbox" value="3D"><span>3D</span></label>
+          <label class="chip"><input type="checkbox" value="玻璃拟态"><span>玻璃拟态</span></label>
+          <label class="chip"><input id="styleOtherToggle" type="checkbox" value="其他"><span>其他</span></label>
+        </div>
+        <div id="styleOtherField" class="field hidden" style="margin-top:12px">
+          <label>其他设计风格</label>
+          <input id="styleOther" placeholder="例如：新粗野主义、Y2K、自然有机、复古未来主义">
+        </div>
+      </div>
+      <div class="grid" style="margin-top:16px">
+        <div class="field">
+          <label>页面氛围 / 第一感觉</label>
+          <input id="mood" placeholder="例如：清新、专业、沉浸、品质感">
+        </div>
+        <div class="field full">
+          <label>色彩倾向</label>
+          <div class="color-fields">
+            <div class="field"><label>主色</label><input id="primaryColor" type="hidden" value="#1478ff"><div class="palette" data-color-target="primaryColor"></div></div>
+            <div class="field"><label>辅色（可多选）</label><input id="secondaryColor" type="hidden" value="#ff9f43"><div class="palette" data-color-target="secondaryColor"></div></div>
+            <div class="field color-note"><label>配色说明 / 自定义填写</label><input id="color" placeholder="例如：主色用于按钮，辅色用于强调；搭配米白背景"></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>版式偏好</label>
+          <input id="layout" placeholder="例如：大留白、卡片式、沉浸式">
+        </div>
+        <div class="field">
+          <label>图形 / 图标 / 插画风格</label>
+          <input id="graphic" placeholder="例如：线性图标、扁平插画">
+        </div>
+        <div class="field full">
+          <label>希望重点突出</label>
+          <input id="focus" placeholder="例如：品牌、活动入口、地图、数据、CTA按钮">
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">4. 参考资料</h2>
+      <div class="grid">
+        <div class="field full">
+          <label>竞品 / 内部案例 / 截图 / AI 链接</label>
+          <textarea id="references" placeholder="每行填写一个链接或附件说明"></textarea>
+        </div>
+        <div class="field">
+          <label>主要参考内容</label>
+          <input id="referenceFocus" placeholder="布局、配色、风格、交互、图标等">
+        </div>
+        <div class="field">
+          <label>不希望参考的部分</label>
+          <input id="avoidReference" placeholder="避免机械复刻或不合适内容">
+        </div>
+      </div>
+      <div class="field full" style="margin-top:18px">
+        <label>上传设计参考图 / 草图 / 竞品截图</label>
+        <label class="upload-zone" id="uploadZone">
+          <input id="imageUpload" type="file" accept="image/png,image/jpeg,image/webp" multiple>
+          <b>点击或拖拽图片到这里</b>
+          <span>支持 PNG、JPG、WebP；建议单张不超过 8MB，图片仅保存在当前浏览器</span>
+        </label>
+        <div id="previewGrid" class="preview-grid"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">5. 设计约束</h2>
+      <div class="grid">
+        <div class="field">
+          <label>必须遵循</label>
+          <input id="constraints" placeholder="品牌规范、政府规范、组件库等">
+        </div>
+        <div class="field">
+          <label>适配要求</label>
+          <input id="responsive" placeholder="375 / 390 / 750 / 1440 / 响应式">
+        </div>
+        <div class="field">
+          <label>现有素材 / 规范</label>
+          <input id="assets" placeholder="Logo、VI、字体、组件、图片等">
+        </div>
+        <div class="field">
+          <label>明确禁止</label>
+          <input id="forbidden" placeholder="禁用颜色、风格、元素、交互等">
+        </div>
+        <div class="field">
+          <label>内容 / 数据准备情况</label>
+          <select id="contentStatus"><option>已有完整真实内容</option><option>已有部分内容</option><option>需要使用示例内容</option><option>尚未确认</option></select>
+        </div>
+        <div class="field">
+          <label>无障碍 / 合规要求</label>
+          <input id="accessibility" placeholder="例如：大字号、色弱友好、WCAG、隐私合规；没有可不填">
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">6. 需要AI输出</h2>
+      <div class="chips" data-group="outputs">
+        <label class="chip"><input type="checkbox" value="design.md" checked><span>design.md</span></label>
+        <label class="chip"><input type="checkbox" value="项目需求理解" checked><span>项目需求理解</span></label>
+        <label class="chip"><input type="checkbox" value="信息架构 IA"><span>信息架构 IA</span></label>
+        <label class="chip"><input type="checkbox" value="页面清单"><span>页面清单</span></label>
+        <label class="chip"><input type="checkbox" value="用户流程"><span>用户流程</span></label>
+        <label class="chip"><input type="checkbox" value="Wireframe"><span>Wireframe</span></label>
+        <label class="chip"><input type="checkbox" value="竞品分析"><span>竞品分析</span></label>
+        <label class="chip"><input type="checkbox" value="Moodboard"><span>Moodboard</span></label>
+        <label class="chip"><input type="checkbox" value="Design Token"><span>Design Token</span></label>
+        <label class="chip"><input type="checkbox" value="组件清单"><span>组件清单</span></label>
+        <label class="chip"><input type="checkbox" value="高保真效果图Prompt" checked><span>高保真效果图Prompt</span></label>
+        <label class="chip"><input type="checkbox" value="前端实现建议"><span>前端实现建议</span></label>
+        <label class="chip"><input type="checkbox" value="验收要点"><span>验收要点</span></label>
+      </div>
+      <div class="field full" style="margin-top:16px">
+        <label>补充要求</label>
+        <textarea id="outputNotes" placeholder="例如：design.md 中需包含移动端首页的完整模块说明与高保真生成提示词"></textarea>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="status" id="formStatus"><span class="dot"></span><span>填写项目名称、摘要和核心功能后即可生成</span></div>
+    </section>
+  </form>
+
+  <section class="card">
+    <h2 class="section-title">生成结果</h2>
+    <div id="output" class="output">表单内容会在这里实时整理为 design.md，无需点击生成。</div>
+  </section>
+  <section id="imageResultCard" class="card image-result-card hidden">
+    <h2 class="section-title">AI 设计图</h2>
+    <div id="imageGenerateResult" class="image-generate-state"><b>正在准备设计图</b><span>将根据当前 design.md 生成高保真视觉稿</span></div>
+  </section>
+  <div class="toolbar">
+    <button type="button" class="ghost demo-action" onclick="fillDemo()">模拟填写</button>
+    <div class="actions">
+      <button type="button" class="ghost" onclick="exportCSV()">导出Excel</button>
+      <button type="button" class="ghost" onclick="exportImage()">导出PNG</button>
+      <button type="button" class="secondary" onclick="downloadMarkdown()">下载design.md</button>
+      <button type="button" class="primary" onclick="downloadPackage(this)">一键打包下载</button>
+      <button type="button" class="image-action" onclick="generateDesignImage(this)">生成设计图</button>
+      <button type="button" class="ghost danger-text" onclick="clearForm()">清空</button>
+    </div>
+  </div>
+</div>
+
+<div id="sizeDrawerMask" class="size-drawer-mask" onclick="closeSizeDrawer(event)"><aside class="size-drawer" role="dialog" aria-modal="true" aria-labelledby="sizeDrawerTitle" onclick="event.stopPropagation()"><div class="size-drawer-head"><div><h3 id="sizeDrawerTitle">选择目标尺寸</h3><div class="hint" style="margin-top:4px">全部分类已展开，可同时选择多个尺寸</div></div><button type="button" class="size-drawer-close" aria-label="关闭" onclick="closeSizeDrawer()">×</button></div><div class="size-drawer-body"><div id="sizeGroups"></div><div class="size-group"><div class="size-group-title">自定义尺寸</div><div class="custom-size"><input id="customWidth" type="number" min="1" placeholder="宽度 px"><input id="customHeight" type="number" min="1" placeholder="高度 px"><input id="customSizeName" placeholder="自定义名称，如：展厅 LED"><button type="button" class="secondary" onclick="addCustomSize()">添加尺寸</button></div><div id="customSizeList" class="size-options" style="margin-top:10px"></div></div></div><div class="size-drawer-foot"><span id="drawerSizeCount" class="hint">已选择 0 个</span><button type="button" class="primary" onclick="closeSizeDrawer()">完成选择</button></div></aside></div>
+<div id="imageAuthMask" class="auth-mask hidden" role="dialog" aria-modal="true" aria-labelledby="imageAuthTitle"><form class="auth-dialog" onsubmit="submitImageLogin(event)"><h3 id="imageAuthTitle">验证生图权限</h3><p>生成设计图会消耗接口额度。首次验证后，本浏览器将保持登录 7 天。</p><div class="auth-fields"><div class="field"><label>账号</label><input id="imageAuthUser" autocomplete="username" required></div><div class="field"><label>密码</label><input id="imageAuthPassword" type="password" autocomplete="current-password" required></div></div><div id="imageAuthError" class="auth-error"></div><div class="auth-actions"><button type="button" class="ghost" onclick="closeImageLogin()">取消</button><button id="imageAuthSubmit" type="submit" class="primary">验证并生成</button></div></form></div>
+<div id="managerMask" class="manager-mask hidden" onclick="closeManager(event)"><section class="manager" onclick="event.stopPropagation()"><div class="manager-head"><h3>本地工作台</h3><button type="button" class="manager-close" onclick="closeManager()">×</button></div><div class="manager-tabs"><button id="taskTab" type="button" onclick="showManagerTab('tasks')">任务管理</button><button id="assetTab" type="button" onclick="showManagerTab('assets')">资产管理</button></div><div id="managerBody" class="manager-body"></div></section></div>
+<input id="assetUpload" type="file" class="hidden" multiple accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml">
+
+<script>
+var uploadedImages=[];
+const sizeCatalog={
+  miniapp:{"小程序基准":["微信标准 750×1334","微信全面屏 750×1624","支付宝 750×1334","抖音 750×1624"],"常用手机":["iPhone 13/14 390×844","iPhone 14 Pro 393×852","iPhone 15 Pro Max 430×932","iPhone 16 Pro 402×874","Android 标准 360×800","Android 大屏 412×915"]},
+  nativeapp:{"iPhone":["iPhone SE 375×667","iPhone 13 mini 375×812","iPhone 13/14 390×844","iPhone 14 Pro 393×852","iPhone 14 Pro Max 430×932","iPhone 15/15 Pro 393×852","iPhone 15 Pro Max 430×932","iPhone 16 393×852","iPhone 16 Pro 402×874","iPhone 16 Pro Max 440×956"],"Android / Pixel":["Android 标准 360×800","Android 中屏 393×873","Android 大屏 412×915","Pixel 7 360×800","Pixel 7 Pro 480×1040","Pixel 8 Pro 448×997","Pixel 9 Pro 427×952","Pixel Fold 613×736"],"Samsung / 折叠屏":["Galaxy S22/S23/S24 360×780","Galaxy Ultra 480×1040","Galaxy Z Flip 360×880","Galaxy Z Fold 604×725","OnePlus 480×1072","OnePlus Open 756×813"],"iPad / 平板":["iPad mini 744×1133","iPad 10.2 810×1080","iPad Air 820×1180","iPad Air 13 1024×1366","iPad Pro 11 834×1210","iPad Pro 13 1032×1376","Android Tablet 1280×800"],"Watch / TV":["Apple Watch 40mm 162×197","Apple Watch 44mm 184×224","Apple Watch 46mm 208×248","Apple Watch Ultra 205×251","Apple TV 1920×1080","Apple TV 4K 3840×2160"]},
+  web:{"桌面端":["1024×1080 Extra Small","1280×1080 Small","1366×768 Laptop","1440×900 MacBook","1440×1080 Medium","1512×982 MacBook Pro 14","1728×1117 MacBook Pro 16","1920×1080 Full HD","2560×1440 2K","3840×2160 4K"],"移动端":["320×640 Extra Small","360×800 Small","375×812 iPhone mini","390×844 Medium","393×873 Large","430×932 Extra Large"],"平板":["768×1024 Small","820×1024 Medium","834×1194 iPad Pro 11","1024×1024 Large","1024×1366 iPad Pro 13"],"分享图":["OpenGraph 1200×630","X 方图 600×600","X 宽图 1200×600","公众号封面 900×383","公众号次图 200×200"]},
+  h5:{"移动端 H5":["320×640 Extra Small","360×800 Android","375×667 iPhone SE","375×812 iPhone mini","390×844 iPhone 13/14","393×852 iPhone Pro","402×874 iPhone 16 Pro","430×932 Pro Max"],"分享与落地页":["750×1334 设计稿","750×1624 全面屏设计稿","1080×1920 竖屏海报","1200×630 OpenGraph"]},
+  page:{"Web 页面":["1280×1080","1366×768","1440×900","1440×1080","1920×1080","2560×1440"],"移动页面":["320×640","360×800","375×812","390×844","393×873","430×932"],"平板页面":["768×1024","820×1180","834×1194","1024×1366"]},
+  logo:{"数字端 Logo":["16×16 Favicon","32×32 Favicon","48×48","64×64","128×128","256×256","512×512","1024×1024 App Icon"],"社交头像":["200×200","400×400","800×800","1080×1080"],"横版品牌":["1200×300","1600×400","2400×600"]},
+  icon:{"界面图标":["12×12","16×16","20×20","24×24","28×28","32×32","36×36","40×40","48×48","64×64"],"应用图标":["128×128","256×256","512×512","1024×1024"],"启动与商店":["180×180 Apple Touch","512×512 Android","1024×1024 App Store"]},
+  banner:{"网页 Banner":["1920×480","1920×600","1440×420","1200×400","1024×300","750×320"],"社交媒体":["1080×1080 方图","1080×1350 竖图","1080×1920 故事","1200×630 OpenGraph","900×383 公众号封面","1242×1660 小红书"],"印刷纸张":["A0 2384×3370","A1 1684×2384","A2 1191×1684","A3 842×1191","A4 595×842","A5 420×595","A6 297×420"],"名片":["中国 1063×638","欧洲 1004×650","日本 1075×650","北美 1050×600"]},
+  print:{"标准海报 / 纸张":["A0 841×1189mm","A1 594×841mm","A2 420×594mm","A3 297×420mm","A4 210×297mm","A5 148×210mm","A6 105×148mm","B1 707×1000mm","B2 500×707mm","B3 353×500mm","B4 250×353mm","B5 176×250mm"],"宣传册 / 折页":["A4 单页 210×297mm","A4 对折 420×297mm","A4 三折 630×297mm","A5 骑马订 148×210mm","方形册 210×210mm","长条折页 210×95mm"],"户外宣传物料":["易拉宝 80×200cm","易拉宝 85×200cm","X 展架 60×160cm","X 展架 80×180cm","门型展架 80×180cm","横幅 300×70cm","海报架 60×90cm"],"卡片 / 名片":["中国名片 90×54mm","欧洲名片 85×55mm","方形卡片 90×90mm","邀请函 A5 148×210mm","明信片 100×148mm"],"包装与标签":["方形标签 50×50mm","圆形标签 50×50mm","瓶贴 90×120mm","手提袋 320×260mm","文件袋 324×229mm"]},
+  dashboard:{"标准大屏":["1920×1080 Full HD","2560×1440 2K","3840×2160 4K","7680×4320 8K"],"超宽 / 拼接屏":["2560×1080 21:9","3440×1440 21:9","3840×1080 双屏","5760×1080 三联屏","7680×2160 双 4K"],"竖屏":["1080×1920","1440×2560","2160×3840"],"会议与显示器":["1440×900 Mac","1512×982 MacBook Pro","2560×1440 Studio Display","3008×1692 Pro Display XDR"]},
+  ppt:{"演示比例":["16:9 宽屏 1920×1080","16:10 宽屏 1920×1200","4:3 标准 1024×768","3:2 展示 1440×960"],"会议与发布":["会议屏 1920×1080","4K 发布会 3840×2160","LED 宽屏 2560×1080","竖屏演示 1080×1920"],"打印与文档":["A4 横向 297×210mm","A4 纵向 210×297mm","Letter 横向 11×8.5in"]},
+  system:{"Web 断点":["320 Mobile XS","360 Mobile S","390 Mobile M","430 Mobile L","768 Tablet S","820 Tablet M","1024 Tablet L","1280 Desktop S","1440 Desktop M","1920 Desktop L","2560 Desktop XL"],"组件基准":["8pt Grid","12 Column 1440","24×24 Icon","40px Control","48px Touch Target"]}
+};
+let customSizes=[],sizeSelections=new Set();
+const configs = {
+  miniapp: [
+    ["目标小程序平台","input","微信 / 支付宝 / 抖音 / 其他"],
+    ["目标设备与基准尺寸","sizepicker",""],
+    ["页面清单与层级","textarea","例如：首页、分类、详情、订单、我的"],
+    ["核心功能与用户路径","textarea","授权登录 → 浏览 → 提交 / 支付 → 结果"],
+    ["TabBar 结构","textarea","Tab 数量、名称、默认与选中状态"],
+    ["平台原生能力","textarea","登录、支付、定位、相机、分享、订阅消息等"],
+    ["关键页面状态","textarea","未授权、加载、空、错误、网络异常、支付结果"]
+  ],
+  nativeapp: [
+    ["目标系统","input","iOS / Android / 双端"],
+    ["目标设备与基准尺寸","sizepicker",""],
+    ["页面清单与导航结构","textarea","底部导航、顶部导航、层级与返回逻辑"],
+    ["核心功能与用户路径","textarea","用户完成主要任务的完整路径"],
+    ["系统能力与权限","textarea","相机、定位、通知、相册、生物识别等"],
+    ["平台规范偏好","input","遵循 iOS HIG / Material Design / 品牌自定义"],
+    ["关键页面状态","textarea","首次启动、权限拒绝、离线、加载、空、错误"]
+  ],
+  web: [
+    ["网站类型","input","官网 / 管理后台 / Web 应用 / 门户 / 电商"],
+    ["目标设备与响应式尺寸","sizepicker",""],
+    ["页面清单与信息架构","textarea","一级导航、二级栏目、核心页面"],
+    ["核心功能与任务流","textarea","用户在 Web 端完成的主要任务"],
+    ["导航与布局方式","input","顶部导航 / 侧边栏 / 通栏 / 固定宽度"],
+    ["浏览器兼容范围","input","Chrome / Edge / Safari；是否兼容旧版本"],
+    ["交互与页面状态","textarea","Hover、Focus、Loading、Empty、Error、权限状态"]
+  ],
+  h5: [
+    ["H5 类型与使用场景","input","服务平台 / 活动专题 / 内容展示 / 表单工具"],
+    ["目标设备与基准尺寸","sizepicker",""],
+    ["页面清单与底部导航","textarea","例如：首页、服务、政策、我的"],
+    ["核心栏目与内容分类","textarea","列出服务入口、内容分类及详情页面"],
+    ["核心功能与用户路径","textarea","进入 → 浏览 / 搜索 → 查看详情 → 申请 / 预约"],
+    ["登录与个人中心","textarea","登录方式、申请记录、收藏、预约等"],
+    ["分享与外部能力","textarea","微信分享、定位、地图、电话、文件下载等"],
+    ["关键页面状态","textarea","加载、空、错误、未登录、提交成功、预约结果"]
+  ],
+  page: [
+    ["页面名称","input","例如：首页 / 详情页"],
+    ["目标设备与页面尺寸","sizepicker",""],
+    ["页面目标","textarea","该页面要解决什么问题"],
+    ["页面模块","textarea","从上到下列出模块"],
+    ["核心交互","textarea","点击、筛选、切换、弹窗等"],
+    ["页面状态","textarea","默认、加载、空、错误、禁用等"]
+  ],
+  logo: [
+    ["Logo名称","input",""],
+    ["目标输出尺寸","sizepicker",""],
+    ["品牌定位","textarea","品牌是什么、面向谁"],
+    ["Logo寓意","textarea","希望表达的文化、象征或概念"],
+    ["中英文名称","input",""],
+    ["主要使用场景","textarea","App图标、官网、印刷物、活动物料等"]
+  ],
+  icon: [
+    ["图标名称 / 功能含义","textarea","可一行一个"],
+    ["目标输出尺寸","sizepicker",""],
+    ["图标数量","input",""],
+    ["使用位置","input","导航、按钮、分类入口等"],
+    ["状态","input","默认、选中、禁用、悬停"]
+  ],
+  banner: [
+    ["主题","input",""],
+    ["尺寸 / 比例","sizepicker",""],
+    ["主标题 / 副标题","textarea",""],
+    ["按钮文案","input",""],
+    ["需要包含的素材","textarea","人物、产品、建筑、地图等"],
+    ["投放位置","input","首页首屏、活动页、广告位等"]
+  ],
+  print: [
+    ["印刷品类型","input","海报 / 折页 / 宣传册 / 易拉宝 / 名片 / 邀请函 / 包装"],
+    ["成品尺寸与物料","sizepicker",""],
+    ["主标题 / 副标题 / 正文","textarea","按视觉层级填写全部印刷文案"],
+    ["使用场景与观看距离","textarea","室内近距离、户外远距离、展会、门店、邮寄等"],
+    ["印刷要求","textarea","CMYK、300dpi、出血 3mm、安全边距、黑色套印等"],
+    ["纸张与工艺","textarea","铜版纸、特种纸、覆膜、烫金、UV、压纹、模切等"],
+    ["必须包含的素材","textarea","Logo、二维码、联系方式、主视觉、版权信息等"],
+    ["交付格式","input","印刷 PDF / TIFF / 可编辑源文件 / JPG 预览图"],
+    ["明确禁止与注意事项","textarea","禁用颜色、二维码安全区、最小字号、版权限制等"]
+  ],
+  dashboard: [
+    ["大屏主题","input",""],
+    ["目标屏幕分辨率","sizepicker",""],
+    ["核心指标","textarea","需要重点展示的数据"],
+    ["图表类型","textarea","折线、柱状、地图、排行、卡片等"],
+    ["展示环境","input","会议室、指挥中心、展厅等"],
+    ["刷新 / 交互要求","textarea",""]
+  ],
+  ppt: [
+    ["演示主题与用途","input","项目汇报 / 方案提案 / 培训分享 / 产品发布 / 路演"],
+    ["演示比例与输出尺寸","sizepicker",""],
+    ["目标观众与决策任务","textarea","谁来看、希望他们理解什么、批准什么或采取什么行动"],
+    ["核心结论 / 一句话主张","textarea","整套 PPT 最希望观众记住的结论"],
+    ["内容素材与数据来源","textarea","现有文案、数据、图表、图片、品牌资料和引用来源"],
+    ["建议页数与演讲时长","input","例如：12 页 / 15 分钟"],
+    ["叙事结构","textarea","背景 → 问题 → 证据 → 方案 → 价值 → 下一步"],
+    ["必须包含的页面","textarea","封面、现状、分析、方案、案例、计划、预算、结论等"],
+    ["图表与可视化需求","textarea","需要呈现的指标、图表类型、关系或流程"],
+    ["演示环境与交付","input","会议室投屏 / 线上会议 / PDF 打印 / PPTX 可编辑文件"],
+    ["演讲者备注要求","textarea","是否需要逐页讲稿、数据来源、转场提示和问答备忘"]
+  ],
+  system: [
+    ["组件范围","textarea","按钮、表单、导航、弹窗、卡片等"],
+    ["覆盖设备与响应式断点","sizepicker",""],
+    ["适用平台","input","Web / 小程序 / APP"],
+    ["现有规范","textarea","品牌色、字体、组件库、命名规则"],
+    ["需要覆盖的状态","textarea","默认、悬停、按下、禁用、加载、错误"],
+    ["技术框架","input","React / Vue / TDesign / Ant Design 等"]
+  ]
+};
+
+function renderDynamicFields(){
+  const type = document.getElementById("designType").value;
+  const box = document.getElementById("dynamicFields");
+  box.innerHTML = "";
+  configs[type].forEach((f,i)=>{
+    const wrap=document.createElement("div");
+    const fixedSizePicker=configs[type][1]?.[1]==="sizepicker";
+    wrap.className="field"+(f[1]==="textarea"&&!(fixedSizePicker&&i===0)?" full":"");
+    const label=document.createElement("label");
+    label.textContent=f[0];
+    if(f[1]==="sizepicker"){
+      wrap.className="field size-field";
+      const picker=document.createElement("div");picker.className="size-picker";picker.style.margin="0";picker.style.padding="0";picker.style.border="0";picker.innerHTML=`<button type="button" class="size-launch" onclick="openSizeDrawer()"><span class="size-launch-main"><span class="size-launch-icon">▣</span><span class="size-launch-text"><b>选择目标尺寸与设备</b><span id="sizeSelectionSummary">根据设计类型推荐，可多选</span></span></span><span class="size-launch-arrow">›</span></button>`;
+      wrap.append(label,picker);box.appendChild(wrap);return;
+    }
+    const el=document.createElement(f[1]);
+    el.id="dynamic_"+i;
+    el.placeholder=f[2]||"";
+    wrap.append(label,el);
+    box.appendChild(wrap);
+  });
+  renderSizeOptions();
+  updateFormUI();
+}
+function dynamicValue(f,i){return f[1]==="sizepicker"?(selectedSizes().join("、")||"未选择"):val("dynamic_"+i)}
+function renderSizeOptions(){const type=document.getElementById("designType").value,catalog=sizeCatalog[type]||{},box=document.getElementById("sizeGroups");box.innerHTML=Object.entries(catalog).map(([group,sizes])=>`<div class="size-group"><div class="size-group-title">${escapeHtml(group)}</div><div class="size-options">${sizes.map(size=>`<label class="size-option"><input type="checkbox" data-size value="${escapeHtml(size)}" ${sizeSelections.has(size)?"checked":""} onchange="sizeSelectionChanged(this)"><span><i class="device-icon ${sizeIconType(group,size)}"></i>${formatSizeLabel(size)}</span></label>`).join("")}</div></div>`).join("");renderCustomSizes();updateSizeSummary()}
+function selectedSizes(){return [...sizeSelections]}
+function addCustomSize(){const w=val("customWidth"),h=val("customHeight"),name=val("customSizeName")||"自定义";if(!w||!h){alert("请填写宽度和高度");return}const size=`${name} ${w}×${h}`;if(!customSizes.includes(size))customSizes.push(size);sizeSelections.add(size);document.getElementById("customWidth").value="";document.getElementById("customHeight").value="";document.getElementById("customSizeName").value="";renderSizeOptions();updateSizeSummary();saveDraft();updateFormUI()}
+function renderCustomSizes(){const box=document.getElementById("customSizeList");if(!box)return;box.innerHTML=customSizes.map((size,i)=>`<label class="size-option"><input type="checkbox" data-size value="${escapeHtml(size)}" ${sizeSelections.has(size)?"checked":""} onchange="sizeSelectionChanged(this)"><span><i class="device-icon desktop"></i>${formatSizeLabel(size)}</span></label><button type="button" class="ghost" style="padding:6px 9px" onclick="removeCustomSize(${i})">×</button>`).join("")}
+function removeCustomSize(i){sizeSelections.delete(customSizes[i]);customSizes.splice(i,1);renderSizeOptions();saveDraft();updateFormUI()}
+function formatSizeLabel(size){const match=String(size).match(/\d+\s*[×x]\s*\d+/i),dimension=match?match[0].replace(/\s/g,""):"",name=String(size).replace(match?.[0]||"","").trim()||"自定义尺寸";return `<span class="size-copy"><b>${escapeHtml(name)}</b><small>${escapeHtml(dimension)}</small></span>`}
+function sizeIconType(group,size){const text=(group+" "+size).toLowerCase();if(/watch|手表/.test(text))return"watch";if(/tv|电视/.test(text))return"tv";if(/ipad|tablet|平板/.test(text))return"tablet";if(/desktop|mac|显示器|大屏|宽屏|会议|web 页面|网页 banner/.test(text))return"desktop";if(/share|分享|opengraph|twitter|公众号|社交/.test(text))return"share";if(/a[0-6]|印刷|名片|纸张/.test(text))return"print";if(/logo|icon|图标|favicon|头像/.test(text))return"icon";return"phone"}
+function sizeSelectionChanged(input){if(input){input.checked?sizeSelections.add(input.value):sizeSelections.delete(input.value)}updateSizeSummary();saveDraft();updateFormUI()}
+function updateSizeSummary(){const sizes=selectedSizes(),summary=document.getElementById("sizeSelectionSummary"),count=document.getElementById("drawerSizeCount");if(summary)summary.textContent=sizes.length?`已选择 ${sizes.length} 个：${sizes.slice(0,2).join("、")}${sizes.length>2?"…":""}`:"根据设计类型推荐，可多选";if(count)count.textContent=`已选择 ${sizes.length} 个`}
+function openSizeDrawer(){document.getElementById("sizeDrawerMask").classList.add("open");document.body.style.overflow="hidden";updateSizeSummary()}
+function closeSizeDrawer(event){if(event&&event.target!==document.getElementById("sizeDrawerMask"))return;document.getElementById("sizeDrawerMask").classList.remove("open");document.body.style.overflow="";updateSizeSummary()}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSizeDrawer()});
+document.getElementById("designType").addEventListener("change",()=>{sizeSelections=new Set();renderDynamicFields();saveDraft()});
+renderDynamicFields();
+
+function initCustomSelects(){document.querySelectorAll("select:not(.customized)").forEach(select=>{select.classList.add("customized");const ui=document.createElement("div");ui.className="select-ui";const trigger=document.createElement("button");trigger.type="button";trigger.className="select-trigger";trigger.setAttribute("aria-haspopup","listbox");trigger.setAttribute("aria-expanded","false");const menu=document.createElement("div");menu.className="select-menu";menu.setAttribute("role","listbox");ui.append(trigger,menu);select.after(ui);trigger.addEventListener("click",e=>{e.stopPropagation();document.querySelectorAll(".select-ui.open").forEach(x=>{if(x!==ui)closeCustomSelect(x)});ui.classList.toggle("open");trigger.setAttribute("aria-expanded",ui.classList.contains("open"));renderCustomSelect(select)});trigger.addEventListener("keydown",e=>handleSelectKeys(e,select,ui));menu.addEventListener("click",e=>e.stopPropagation());renderCustomSelect(select)})}
+function renderCustomSelect(select){const ui=select.nextElementSibling;if(!ui?.classList.contains("select-ui"))return;ui.querySelector(".select-trigger").textContent=select.selectedOptions[0]?.text||"请选择";ui.querySelector(".select-menu").innerHTML=[...select.options].map((o,i)=>`<button type="button" role="option" aria-selected="${o.selected}" class="select-option ${o.selected?"selected":""}" onclick="chooseSelectOption('${select.id}',${i})">${escapeHtml(o.text)}</button>`).join("")}
+function chooseSelectOption(id,index){const select=document.getElementById(id);select.selectedIndex=index;select.dispatchEvent(new Event("change",{bubbles:true}));select.dispatchEvent(new Event("input",{bubbles:true}));renderCustomSelect(select);closeCustomSelect(select.nextElementSibling)}
+function closeCustomSelect(ui){ui?.classList.remove("open");ui?.querySelector(".select-trigger")?.setAttribute("aria-expanded","false")}
+function handleSelectKeys(e,select,ui){if(!["ArrowDown","ArrowUp","Enter","Escape"," "].includes(e.key))return;e.preventDefault();if(e.key==="Escape"){closeCustomSelect(ui);return}if(e.key==="Enter"||e.key===" "){ui.classList.toggle("open");renderCustomSelect(select);return}const next=Math.max(0,Math.min(select.options.length-1,select.selectedIndex+(e.key==="ArrowDown"?1:-1)));chooseSelectOption(select.id,next);ui.classList.add("open")}
+function syncCustomSelects(){document.querySelectorAll("select.customized").forEach(renderCustomSelect)}
+document.addEventListener("click",()=>document.querySelectorAll(".select-ui.open").forEach(closeCustomSelect));initCustomSelects();
+
+function checked(group){
+  return [...document.querySelectorAll(`[data-group="${group}"] input:checked`)].map(x=>x.value==="其他"&&group==="style"?(val("styleOther")||"其他（未填写）"):x.value).join("、");
+}
+function val(id){return document.getElementById(id)?.value.trim()||""}
+function secondaryColors(){return val("secondaryColor").split(",").filter(Boolean)}
+function colorValue(){return `主色 ${val("primaryColor")}；辅色 ${secondaryColors().join("、")||"未选择"}${val("color")?`；${val("color")}`:""}`}
+const presetColors=["#1478ff","#00a870","#7c3aed","#e64340","#ff8a00","#ffbe00","#111827","#64748b","#f5f1e8","#ffffff"];
+function renderColorPalettes(){document.querySelectorAll(".palette").forEach(box=>{const target=box.dataset.colorTarget,current=val(target).toLowerCase(),selected=current.split(",").filter(Boolean);box.innerHTML=presetColors.map(c=>`<button type="button" class="swatch ${selected.includes(c)?"selected":""}" style="background:${c}" title="${c}" aria-label="选择 ${c}" onclick="chooseColor('${target}','${c}')"></button>`).join("")+`<button type="button" class="custom-color-btn" onclick="toggleColorWheel('${target}')">自定义</button><input class="custom-picker hidden" id="${target}Wheel" type="color" value="${selected[0]||"#1478ff"}" onchange="chooseColor('${target}',this.value)">`})}
+function chooseColor(target,color){const input=document.getElementById(target);if(target==="secondaryColor"){let colors=input.value.toLowerCase().split(",").filter(Boolean);colors=colors.includes(color)?colors.filter(x=>x!==color):[...colors,color].slice(-5);input.value=colors.join(",")}else input.value=color;renderColorPalettes();updateFormUI()}
+function toggleColorWheel(target){document.getElementById(target+"Wheel").classList.toggle("hidden")}
+renderColorPalettes();
+const styleOtherToggle=document.getElementById("styleOtherToggle");
+function toggleOtherStyle(){document.getElementById("styleOtherField").classList.toggle("hidden",!styleOtherToggle.checked)}
+styleOtherToggle.addEventListener("change",toggleOtherStyle);toggleOtherStyle();
+
+const upload=document.getElementById("imageUpload"), zone=document.getElementById("uploadZone");
+upload.addEventListener("change",e=>addImages(e.target.files));
+["dragenter","dragover"].forEach(n=>zone.addEventListener(n,e=>{e.preventDefault();zone.classList.add("drag")}));
+["dragleave","drop"].forEach(n=>zone.addEventListener(n,e=>{e.preventDefault();zone.classList.remove("drag")}));
+zone.addEventListener("drop",e=>addImages(e.dataTransfer.files));
+function addImages(files){
+  const all=[...files].filter(f=>f.type.startsWith("image/"));
+  const oversized=all.filter(f=>f.size>8*1024*1024);
+  if(oversized.length)alert(`以下图片超过 8MB，未添加：\n${oversized.map(f=>f.name).join("\n")}`);
+  all.filter(f=>f.size<=8*1024*1024).slice(0,9-uploadedImages.length).forEach(file=>{
+    const reader=new FileReader(); reader.onload=()=>{uploadedImages.push({name:file.name,data:reader.result});renderPreviews();updateFormUI()}; reader.readAsDataURL(file);
+  }); upload.value="";
+}
+function renderPreviews(){
+  document.getElementById("previewGrid").innerHTML=uploadedImages.map((x,i)=>`<div class="preview-item"><img src="${x.data}" alt="参考图 ${i+1}"><button type="button" aria-label="删除" onclick="removeImage(${i})">×</button><div class="preview-meta">参考图 ${i+1} · ${escapeHtml(x.name)}</div></div>`).join("");
+}
+function removeImage(i){uploadedImages.splice(i,1);renderPreviews();updateFormUI()}
+function escapeHtml(s){return s.replace(/[&<>\"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+
+let importedPairs={},importMessages=[],importSourceNames=[];
+const smartImportInput=document.getElementById("smartImport"),smartImportZone=document.getElementById("smartImportZone");let smartImportBusy=false,smartDragDepth=0,smartProgressTimer=0,smartProgressValue=0;
+smartImportInput.addEventListener("change",async e=>{await handleSmartImportFiles([...e.target.files]);e.target.value=""});
+smartImportZone.addEventListener("dragenter",e=>{e.preventDefault();smartDragDepth++;smartImportZone.classList.add("drop-active")});
+smartImportZone.addEventListener("dragover",e=>{e.preventDefault();if(e.dataTransfer)e.dataTransfer.dropEffect="copy"});
+smartImportZone.addEventListener("dragleave",e=>{e.preventDefault();smartDragDepth=Math.max(0,smartDragDepth-1);if(!smartDragDepth)smartImportZone.classList.remove("drop-active")});
+smartImportZone.addEventListener("drop",async e=>{e.preventDefault();smartDragDepth=0;smartImportZone.classList.remove("drop-active");await handleSmartImportFiles([...e.dataTransfer.files])});
+document.addEventListener("paste",async e=>{const items=[...(e.clipboardData?.items||[])],files=items.map(x=>x.kind==="file"?x.getAsFile():null).filter(Boolean);if(files.length){e.preventDefault();await handleSmartImportFiles(files);return}const editing=e.target.matches?.('input,textarea,[contenteditable="true"]');const text=e.clipboardData?.getData("text/plain")?.trim();if(text&&!editing){e.preventDefault();await handleSmartImportFiles([new File([text],`粘贴板文字_${new Date().toISOString().slice(0,19).replace(/[:T]/g,"-")}.txt`,{type:"text/plain"})])}});
+async function pasteSmartImport(){
+  try{
+    if(navigator.clipboard?.read){const clipboardItems=await navigator.clipboard.read(),files=[];for(const item of clipboardItems){for(const type of item.types){if(type.startsWith("image/")||type==="application/pdf"){const blob=await item.getType(type);files.push(new File([blob],`粘贴板_${Date.now()}.${type.split("/")[1].replace("jpeg","jpg")}`,{type}))}}}if(files.length){await handleSmartImportFiles(files);return}}
+    const text=await navigator.clipboard.readText();if(!text.trim())throw new Error("粘贴板中没有可识别的图片、文件或文字");await handleSmartImportFiles([new File([text],`粘贴板文字_${Date.now()}.txt`,{type:"text/plain"})]);
+  }catch(error){alert(`无法读取粘贴板：${error.message}\n也可以直接按 ⌘/Ctrl + V 粘贴。`)}
+}
+async function handleSmartImportFiles(files){
+  if(smartImportBusy||!files.length)return;
+  const allowed=/\.(xls|xlsx|csv|json|txt|md|html?|pdf|docx?|png|jpe?g|webp)$/i,valid=files.filter(file=>allowed.test(file.name)&&file.size<=12*1024*1024).slice(0,10),rejected=files.filter(file=>!valid.includes(file));
+  if(!valid.length){alert("没有可识别的文件。请检查格式与 12MB 大小限制");return}
+  smartImportBusy=true;smartImportZone.classList.add("import-busy");
+  try{await importRequirementFiles(valid);if(rejected.length){importMessages.push(`${rejected.length} 个文件因格式、大小或数量限制未处理`);renderImportPreview()}}
+  finally{smartImportBusy=false;smartImportZone.classList.remove("import-busy")}
+}
+function showImportProgress(percent,title,detail){
+  smartProgressValue=Math.max(smartProgressValue,Math.min(100,Math.round(percent)));const box=document.getElementById("importResult"),step=smartProgressValue<20?0:smartProgressValue<45?1:smartProgressValue<90?2:smartProgressValue<100?3:4;
+  box.classList.remove("hidden");box.innerHTML=`<div class="import-progress" role="status" aria-live="polite"><div class="import-progress-head"><div><div class="import-progress-title">${escapeHtml(title)}</div><div class="import-progress-detail">${escapeHtml(detail||"")}</div></div><div class="import-progress-percent">${smartProgressValue}%</div></div><div class="import-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${smartProgressValue}"><div class="import-progress-bar" style="width:${smartProgressValue}%"></div></div><div class="import-progress-steps">${["检查文件","读取内容","AI 识别","整理字段","完成"].map((x,i)=>`<span class="${i<=step?"active":""}">${x}</span>`).join("")}</div></div>`;
+}
+function startAIProgress(){clearInterval(smartProgressTimer);smartProgressTimer=setInterval(()=>{if(smartProgressValue<88)showImportProgress(smartProgressValue+1,"AI 正在识别与分析","正在合并栏目规划、业务信息和视觉参考，请保持页面打开")},900)}
+function stopAIProgress(){clearInterval(smartProgressTimer);smartProgressTimer=0}
+async function importRequirementFiles(files){
+  importedPairs={};importMessages=[];importSourceNames=files.map(x=>x.name);uploadedImages=[];renderPreviews();smartProgressValue=0;showImportProgress(5,"正在检查文件",`共 ${files.length} 个文件，已替换上一批识别参考图`);
+  for(let fileIndex=0;fileIndex<files.length;fileIndex++){const file=files[fileIndex];showImportProgress(10+Math.round((fileIndex/files.length)*15),"正在读取文件",`${fileIndex+1}/${files.length} · ${file.name}`);
+    if(file.type.startsWith("image/"))addImages([file]);
+    if(/\.(xlsx|pdf|docx?)$/i.test(file.name))continue;
+    try{const text=await file.text();if(/\.json$/i.test(file.name))parseImportedJSON(text);else if(/\.html?$|\.xls$/i.test(file.name)||/<table/i.test(text))parseImportedTable(text);else if(/\.csv$/i.test(file.name))parseImportedCSV(text);else if(!file.type.startsWith("image/"))parseImportedText(text)}catch(err){importMessages.push(`${file.name} 本地读取失败`)}
+  }
+  try{
+    showImportProgress(28,"正在准备上传",`正在整理 ${files.length} 个文件的识别内容`);
+    const ai=await extractFilesWithAI(files);
+    stopAIProgress();showImportProgress(94,"正在整理识别字段","AI 已返回结果，正在匹配表单字段");
+    Object.entries(ai.fields||{}).forEach(([key,value])=>addImportedPair(key,value));
+    (ai.notes||[]).forEach(x=>importMessages.push(`AI 提示：${x}`));
+    importMessages.unshift(`AI 识别完成${Number.isFinite(ai.confidence)?` · 可信度 ${Math.round(ai.confidence*100)}%`:""}，请确认后填入`);
+  }catch(err){
+    stopAIProgress();
+    const direct=location.protocol==="file:";
+    importMessages.unshift(direct?"当前为直接打开模式：已使用本地解析；如需识别截图或 XLSX，请通过安全服务启动页面":"AI 识别暂不可用，已保留本地解析结果");
+    if(!direct)importMessages.push(`原因：${err.message}`);
+  }
+  if(Object.keys(importedPairs).length){showImportProgress(100,"识别完成",`已提取 ${Object.keys(importedPairs).length} 个字段，请检查后填入`)}
+  renderImportPreview();
+}
+function allowedImportFields(){const typeFields=Object.values(configs).flat().map(x=>x[0]);return [...new Set([...document.querySelectorAll("label")].map(x=>x.childNodes[0]?.textContent?.trim()).filter(Boolean).concat(typeFields,["项目名称","产品名称","宣传语","摘要","所属行业","设计类型","设计类型判断依据","目标平台","目标系统","目标用户","核心业务目标","页面清单与导航结构","核心功能与用户路径","系统能力与权限","关键页面状态","内容结构","整体风格","页面氛围","主色","辅色","配色说明","版式偏好","图形风格","重点突出","目标尺寸与设备","适配要求","现有素材","必须遵循","明确禁止"]))]}
+function fileAsDataURL(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file)})}
+async function imageDimensions(file){try{const bitmap=await createImageBitmap(file),size={width:bitmap.width,height:bitmap.height};bitmap.close();return size}catch{return{}}}
+async function extractFilesWithAI(files){
+  if(location.protocol==="file:")throw new Error("请使用本机安全服务打开页面");
+  const payload=[];
+  for(let i=0;i<files.slice(0,10).length;i++){const file=files[i];showImportProgress(30+Math.round(((i+1)/Math.min(files.length,10))*12),"正在转换文件",`${i+1}/${Math.min(files.length,10)} · ${file.name}`);
+    if(file.size>12*1024*1024)throw new Error(`${file.name} 超过 12MB`);
+    const textLike=/\.(csv|json|txt|md|html?|xls)$/i.test(file.name)&&!/\.xlsx$/i.test(file.name);
+    if(textLike)payload.push({name:file.name,mimeType:file.type||"text/plain",text:await file.text()});else{const dimensions=file.type.startsWith("image/")?await imageDimensions(file):{};payload.push({name:file.name,mimeType:file.type||"application/octet-stream",dataUrl:await fileAsDataURL(file),...dimensions})}
+  }
+  return new Promise((resolve,reject)=>{const xhr=new XMLHttpRequest();xhr.open("POST","/api/extract");xhr.setRequestHeader("content-type","application/json");xhr.upload.onprogress=e=>{if(e.lengthComputable)showImportProgress(42+Math.round((e.loaded/e.total)*20),"正在上传文件",`${formatFileSize(e.loaded)} / ${formatFileSize(e.total)}`)};xhr.upload.onload=()=>{showImportProgress(64,"文件上传完成","AI 已开始识别，复杂图片和文档可能需要一些时间");startAIProgress()};xhr.onerror=()=>{stopAIProgress();reject(new Error("网络连接失败"))};xhr.ontimeout=()=>{stopAIProgress();reject(new Error("AI 识别超时"))};xhr.onload=()=>{stopAIProgress();let data={};try{data=JSON.parse(xhr.responseText||"{}")}catch{}if(xhr.status<200||xhr.status>=300){reject(new Error(data.error||`请求失败（${xhr.status}）`));return}resolve(data)};xhr.timeout=180000;xhr.send(JSON.stringify({files:payload,allowedFields:allowedImportFields()}))});
+}
+function formatFileSize(bytes){if(bytes<1024)return`${bytes} B`;if(bytes<1024*1024)return`${(bytes/1024).toFixed(1)} KB`;return`${(bytes/1024/1024).toFixed(1)} MB`}
+function addImportedPair(key,value){key=String(key||"").trim().replace(/\s+/g,"");value=String(value??"").trim();if(key&&value&&value!=="—")importedPairs[key]=value}
+function parseImportedTable(text){const doc=new DOMParser().parseFromString(text,"text/html");doc.querySelectorAll("tr").forEach(tr=>{const cells=[...tr.querySelectorAll("th,td")].map(x=>x.textContent.trim());if(cells.length>=3)addImportedPair(cells[cells.length-2],cells[cells.length-1]);else if(cells.length===2)addImportedPair(cells[0],cells[1])})}
+function parseImportedCSV(text){parseCSVRows(text).forEach(row=>{if(row.length>=3)addImportedPair(row[row.length-2],row[row.length-1]);else if(row.length===2)addImportedPair(row[0],row[1])})}
+function parseCSVRows(text){const rows=[];let row=[],cell="",quoted=false;for(let i=0;i<text.length;i++){const ch=text[i];if(ch==='"'){if(quoted&&text[i+1]==='"'){cell+='"';i++}else quoted=!quoted}else if(ch===','&&!quoted){row.push(cell);cell=""}else if((ch==='\n'||ch==='\r')&&!quoted){if(ch==='\r'&&text[i+1]==='\n')i++;row.push(cell);if(row.some(x=>x.trim()))rows.push(row);row=[];cell=""}else cell+=ch}row.push(cell);if(row.some(x=>x.trim()))rows.push(row);return rows}
+function parseImportedText(text){text.split(/\n/).forEach(line=>{const m=line.match(/^\s*[-*#]*\s*([^：:]{2,30})[：:]\s*(.+)$/);if(m)addImportedPair(m[1],m[2])})}
+function parseImportedJSON(text){try{const obj=JSON.parse(text);const walk=(x,prefix="")=>Object.entries(x||{}).forEach(([k,v])=>{if(v&&typeof v==="object"&&!Array.isArray(v))walk(v,k);else addImportedPair(k,Array.isArray(v)?v.join("、"):v)});walk(obj)}catch(e){importMessages.push("JSON 格式无法解析")}}
+function findImported(...names){for(const name of names){const target=name.replace(/\s+/g,"");const key=Object.keys(importedPairs).find(k=>k===target||k.includes(target)||target.includes(k));if(key)return importedPairs[key]}return""}
+function resolveImportedDesignType(typeText=""){
+  const exact=String(typeText).toLowerCase(),exactRules=[["miniapp",/小程序/],["nativeapp",/原生\s*app|ios|android|手机应用|移动应用|客户端/],["h5",/\bh5\b|活动页|移动专题|落地页/],["ppt",/\bppt\b|演示文稿|幻灯片|汇报/],["print",/平面设计|印刷|海报|宣传单|折页|易拉宝|展板|画册|名片|包装/],["dashboard",/数据大屏|可视化大屏|驾驶舱|指挥中心|led\s*大屏/],["banner",/banner|社交配图|广告横幅/],["logo",/\blogo\b|标志设计|品牌标识/],["icon",/\bicon\b|图标设计/],["system",/design\s*system|组件系统|设计系统/],["web",/web|网站|网页|官网|门户|pc端|管理后台|后台系统/],["page",/单个页面|单页/]];
+  for(const [value,rule] of exactRules)if(rule.test(exact))return value;
+  const context=[...importSourceNames,...Object.keys(importedPairs),...Object.values(importedPairs)].join(" ").toLowerCase(),rules=[["print",/海报|宣传单|折页|易拉宝|展板|画册|名片|包装|印刷物料|平面稿|平面设计/],["ppt",/\bppt\b|演示文稿|幻灯片|路演稿|汇报材料/],["miniapp",/微信小程序|支付宝小程序|抖音小程序|小程序/],["h5",/\bh5\b|移动专题|微信活动页|活动落地页/],["nativeapp",/原生\s*app|ios|android|手机应用|移动应用|客户端|tabbar/],["dashboard",/数据大屏|可视化大屏|驾驶舱|指挥中心|led\s*大屏/],["banner",/banner|社交配图|广告横幅/],["logo",/\blogo\b|品牌标识|标志设计/],["icon",/\bicon\b|图标系统|图标设计/],["system",/design\s*system|组件系统|设计系统/],["web",/web|网站|网页|官网|门户|pc端|浏览器|管理后台|后台系统/],["page",/单个页面|单页/]];
+  for(const [value,rule] of rules)if(rule.test(context))return value;return"";
+}
+function renderImportPreview(){const box=document.getElementById("importResult"),entries=Object.entries(importedPairs);box.classList.remove("hidden");box.innerHTML=`<div class="import-summary"><b>识别到 ${entries.length} 个字段</b>${entries.length?'<button type="button" class="primary" onclick="applyImportedData()">确认并填入表单</button>':''}</div>${entries.length?`<div class="import-fields">${entries.slice(0,12).map(([k,v])=>`<div class="import-field"><b>${escapeHtml(k)}</b>${escapeHtml(truncateText(v,60))}</div>`).join("")}</div>`:""}${importMessages.map(x=>`<div class="import-warn">${escapeHtml(x)}</div>`).join("")}`}
+function applyImportedData(){const fieldMap={projectName:["项目名称"],productName:["产品名称","产品/主题","产品/主题/Logo名称"],slogan:["宣传语","小标题/口号/宣传语"],summary:["摘要","项目摘要"],mood:["页面氛围","氛围"],color:["配色说明","色彩倾向","色彩"],layout:["版式偏好","版式"],graphic:["图形风格","图形/图标/插画风格"],focus:["重点突出","希望重点突出","设计重点"],references:["参考资料","资料"],referenceFocus:["主要参考"],avoidReference:["不希望参考"],constraints:["必须遵循"],responsive:["适配要求"],assets:["现有素材","现有素材/规范"],forbidden:["明确禁止"],outputNotes:["补充要求"]};const typeText=findImported("设计类型"),resolvedType=resolveImportedDesignType(typeText);if(resolvedType){const select=document.getElementById("designType");select.value=resolvedType;sizeSelections=new Set();renderDynamicFields();syncCustomSelects()}Object.entries(fieldMap).forEach(([id,names])=>{const value=findImported(...names),el=document.getElementById(id);if(value&&el)el.value=value});const industry=findImported("所属行业");if(industry){const s=document.getElementById("industry"),o=[...s.options].find(x=>industry.includes(x.text));if(o)s.value=o.value}const style=findImported("整体风格","设计风格","视觉风格");if(style){document.querySelectorAll('[data-group="style"] input').forEach(x=>x.checked=style.includes(x.value));const known=[...document.querySelectorAll('[data-group="style"] input')].some(x=>x.value!=="其他"&&x.checked);if(!known){styleOtherToggle.checked=true;document.getElementById("styleOther").value=style}toggleOtherStyle()}const primary=findImported("主色","品牌主色").match(/#[0-9a-f]{6}/i)?.[0];if(primary)document.getElementById("primaryColor").value=primary;const secondary=[...findImported("辅色","辅助色").matchAll(/#[0-9a-f]{6}/ig)].map(x=>x[0]);if(secondary.length)document.getElementById("secondaryColor").value=secondary.slice(0,5).join(",");configs[document.getElementById("designType").value].forEach((f,i)=>{if(f[1]!=="sizepicker"){const aliases={"目标系统":["目标系统","目标平台"],"目标平台":["目标平台","目标系统"],"页面清单与导航结构":["页面清单与导航结构","页面清单","导航结构","内容结构"],"核心功能与用户路径":["核心功能与用户路径","核心功能","用户路径"],"系统能力与权限":["系统能力与权限","系统能力","权限"],"关键页面状态":["关键页面状态","页面状态"]};const v=findImported(f[0],...(aliases[f[0]]||[])),el=document.getElementById("dynamic_"+i);if(v&&el)el.value=v}});const sizes=findImported("目标尺寸与设备","目标设备与基准尺寸","目标设备与响应式尺寸","目标尺寸");if(sizes)sizes.split(/[、,，;；\n]+/).filter(Boolean).forEach(x=>sizeSelections.add(x.trim()));renderSizeOptions();renderColorPalettes();syncCustomSelects();updateFormUI();saveDraft();const reason=findImported("设计类型判断依据");document.getElementById("importResult").innerHTML=`<div class="status ready"><span class="dot"></span><span>已自动选择“${escapeHtml(document.getElementById("designType").selectedOptions[0].text)}”${reason?` · ${escapeHtml(reason)}`:""}，识别内容已填入</span></div>`}
+
+function generateBrief(){
+  const typeText=document.getElementById("designType").selectedOptions[0].text;
+  const dynamic=configs[document.getElementById("designType").value].map((f,i)=>`- ${f[0]}：${dynamicValue(f,i)}`).join("\n");
+  const text=`# UI Design Brief
+
+## 1. 项目基础
+- 项目名称：${val("projectName")}
+- 产品名称 / 主题 / Logo名称：${val("productName")}
+- 小标题 / 口号 / 宣传语：${val("slogan")}
+- 摘要：${val("summary")}
+- 所属行业：${val("industry")}
+- 设计类型：${typeText}
+
+## 2. 类型信息
+${dynamic}
+
+## 3. 视觉方向
+- 整体风格：${checked("style")}
+- 页面氛围：${val("mood")}
+- 色彩倾向：${colorValue()}
+- 版式偏好：${val("layout")}
+- 图形 / 图标 / 插画风格：${val("graphic")}
+- 希望重点突出：${val("focus")}
+
+## 4. 参考资料
+- 资料：${val("references")}
+- 主要参考：${val("referenceFocus")}
+- 不希望参考：${val("avoidReference")}
+
+## 5. 设计约束
+- 必须遵循：${val("constraints")}
+- 适配要求：${val("responsive")}
+- 现有素材 / 规范：${val("assets")}
+- 明确禁止：${val("forbidden")}
+
+## 6. AI输出
+- 需要输出：${checked("outputs")}
+- 补充要求：${val("outputNotes")}
+
+## 7. 附件
+- 随附参考图：${uploadedImages.length} 张（提交给 AI 时请与本文件一起上传）
+
+## 8. AI 执行要求
+请基于以上信息：
+1. 先识别缺失信息并列出最少必要确认项；
+2. 生成结构完整、可直接执行的 design.md；
+3. 明确页面信息架构、模块顺序、视觉策略、Design Token、组件及状态；
+4. 严格按照“${typeText}”的平台特性、设计基准、导航模式和交互规范输出高保真画面，不套用其他平台模板；
+5. 高保真稿必须使用真实业务文案，覆盖默认、加载、空、错误等必要状态；
+6. 将参考图编号为参考图1～${uploadedImages.length || "N"}，逐张说明仅借鉴哪些特征；
+7. 不机械复刻参考案例，不虚构品牌资产与业务数据。`;
+  document.getElementById("output").textContent=text;
+  const hasContent=Boolean(val("projectName")||val("productName")||val("summary")||val("slogan")||configs[document.getElementById("designType").value].some((f,i)=>f[1]!=="sizepicker"&&dynamicValue(f,i)));
+  const status=document.getElementById("formStatus");status.classList.toggle("ready",hasContent);
+  status.lastElementChild.textContent=hasContent?"内容已实时整理，可随时下载 design.md 或一键打包交给 Codex 或其他 AI":"开始填写后，内容会实时整理为 AI 设计任务包";
+}
+async function copyBrief(){
+  const text=document.getElementById("output").textContent;
+  await navigator.clipboard.writeText(text);
+  alert("已复制");
+}
+
+function download(name,content,type){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([content],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
+function recordClientUsage(type,detail={}){if(location.protocol==="file:")return;fetch("/api/record",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({type,detail})}).catch(()=>{})}
+function safeName(){return (val("projectName")||"UI设计需求").replace(/[\\/:*?\"<>|]/g,"-")}
+function downloadMarkdown(){generateBrief();const brief=document.getElementById("output").textContent;recordClientUsage("下载design.md",{projectName:val("projectName"),designType:document.getElementById("designType").selectedOptions[0].text,brief});download(`${safeName()}_design.md`,brief,"text/markdown;charset=utf-8")}
+let generatedDesignImage="",imageProgressTimer=0;
+let pendingImageButton=null,imageAuthKnown=false;
+function openImageLogin(button){pendingImageButton=button;document.getElementById("imageAuthError").textContent="";document.getElementById("imageAuthMask").classList.remove("hidden");setTimeout(()=>document.getElementById("imageAuthUser").focus(),0)}
+function closeImageLogin(){document.getElementById("imageAuthMask").classList.add("hidden");document.getElementById("imageAuthPassword").value="";pendingImageButton=null}
+async function ensureImageAuth(button){if(imageAuthKnown)return true;try{const r=await fetch("/api/image-auth");const d=await r.json();if(d.authenticated){imageAuthKnown=true;return true}}catch{}openImageLogin(button);return false}
+async function submitImageLogin(event){event.preventDefault();const submit=document.getElementById("imageAuthSubmit"),error=document.getElementById("imageAuthError");submit.disabled=true;submit.textContent="正在验证…";error.textContent="";try{const response=await fetch("/api/image-login",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({username:val("imageAuthUser"),password:val("imageAuthPassword")})});const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||"验证失败");imageAuthKnown=true;const button=pendingImageButton;closeImageLogin();if(button)await generateDesignImage(button,true)}catch(e){error.textContent=e.message}finally{submit.disabled=false;submit.textContent="验证并生成"}}
+function selectedAspectInfo(){for(const size of selectedSizes()){const match=String(size).match(/(\d+(?:\.\d+)?)\s*[×xX*]\s*(\d+(?:\.\d+)?)/);if(match&&Number(match[1])>0&&Number(match[2])>0){const width=Number(match[1]),height=Number(match[2]);return{width,height,ratio:width/height,label:size}}}return{width:0,height:0,ratio:0,label:"未指定"}}
+function selectedAspectRatio(){return selectedAspectInfo().ratio}
+function preferredImageSize(){const ratio=selectedAspectRatio();if(ratio){if(ratio>1.15)return"1536x1024";if(ratio<.87)return"1024x1536";return"1024x1024"}const type=document.getElementById("designType").value;if(["logo","icon"].includes(type))return"1024x1024";if(["web","banner","dashboard","ppt","system"].includes(type))return"1536x1024";return"1024x1536"}
+function imageGenerationPrompt(){const type=document.getElementById("designType").selectedOptions[0].text,brief=document.getElementById("output").textContent,aspect=selectedAspectInfo(),canvas=preferredImageSize(),ratioText=aspect.ratio?aspect.ratio.toFixed(4):"按类型默认";return `你是一名资深 UI 视觉设计师。请根据下面的 Design Brief 生成一张完整、可落地的“${type}”高保真设计图。\n\n要求：\n- 输出单张完整界面，不要输出设备模型、情绪板、线框图或多方案拼贴；\n- 目标尺寸“${aspect.label}”对应精确宽高比 ${ratioText}；构图必须适应该比例并将重要内容放在安全区域；接口请求使用最接近的标准画布 ${canvas}，返回后会本地裁切为精确比例；\n- 不要求按目标原始像素生成，只需要保持其宽高比例；\n- 严格呈现真实中文业务文案、清晰信息层级、专业栅格、组件状态与视觉重点；\n- 适合政企、新闻与公共服务场景，避免廉价模板感、过度装饰和不可读小字；\n- 根据设计类型遵循对应平台规范；\n- 参考图仅借鉴布局、色彩、视觉氛围和信息组织，不机械复刻；\n- 画面应达到可供评审的高保真 UI 效果。\n\n${brief}`.slice(0,12000)}
+function loadGeneratedImage(src){return new Promise((resolve,reject)=>{const image=new Image();if(/^https?:/i.test(src))image.crossOrigin="anonymous";image.onload=()=>resolve(image);image.onerror=()=>reject(new Error("生成图片加载失败"));image.src=src})}
+async function adaptImageToSelectedRatio(src){const aspect=selectedAspectInfo();if(!aspect.ratio)return{image:src,outputSize:"",ratioLabel:"默认比例"};try{const image=await loadGeneratedImage(src),sw=image.naturalWidth,sh=image.naturalHeight,sourceRatio=sw/sh,target=aspect.ratio;let sx=0,sy=0,cropW=sw,cropH=sh;if(sourceRatio>target){cropW=sh*target;sx=(sw-cropW)/2}else if(sourceRatio<target){cropH=sw/target;sy=(sh-cropH)/2}let outW,outH;if(target>=1){outW=1536;outH=Math.max(1,Math.round(outW/target))}else{outH=1536;outW=Math.max(1,Math.round(outH*target))}const canvas=document.createElement("canvas");canvas.width=outW;canvas.height=outH;canvas.getContext("2d").drawImage(image,sx,sy,cropW,cropH,0,0,outW,outH);return{image:canvas.toDataURL("image/png"),outputSize:`${outW}×${outH}`,ratioLabel:`${aspect.width}:${aspect.height}（${target.toFixed(4)}）`}}catch{return{image:src,outputSize:"",ratioLabel:`${aspect.width}:${aspect.height}（裁切失败，保留标准画布）`}}}
+function renderImageProgress(percent,title,detail){const box=document.getElementById("imageGenerateResult");box.className="image-generate-state";box.innerHTML=`<b>${escapeHtml(title)} · ${percent}%</b><span>${escapeHtml(detail)}</span><div class="import-progress-track" style="margin-top:14px"><div class="import-progress-bar" style="width:${percent}%"></div></div>`}
+async function generateDesignImage(button,authorized=false){
+  generateBrief();if(!val("projectName")&&!val("summary")&&!val("productName")){alert("请至少填写项目名称或项目摘要后再生成设计图");return}
+  if(!authorized&&!await ensureImageAuth(button))return;
+  const card=document.getElementById("imageResultCard"),box=document.getElementById("imageGenerateResult");card.classList.remove("hidden");card.scrollIntoView({behavior:"smooth",block:"start"});button.disabled=true;button.textContent="正在生成…";let progress=8;renderImageProgress(progress,"正在整理设计提示词","使用稳定模式生成，避免第三方通道超时");clearInterval(imageProgressTimer);imageProgressTimer=setInterval(()=>{if(progress<88){progress+=1;renderImageProgress(progress,"GPT Image 正在生成高保真设计图","请保持页面打开；超时后不会自动重试，避免重复扣费")}},1100);
+  try{const response=await fetch("/api/generate-image",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({prompt:imageGenerationPrompt(),size:preferredImageSize()})});const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||`请求失败（${response.status}）`);if(!data.image)throw new Error("接口未返回图片");const adapted=await adaptImageToSelectedRatio(data.image);generatedDesignImage=adapted.image;clearInterval(imageProgressTimer);box.className="";box.innerHTML=`<div class="generated-image-wrap"><img src="${escapeHtml(adapted.image)}" alt="AI 生成的高保真设计图"><div class="generated-image-meta"><span>${escapeHtml(data.model||"GPT Image")} · ${escapeHtml(data.quality||"medium")} · 比例 ${escapeHtml(adapted.ratioLabel)}${adapted.outputSize?` · ${escapeHtml(adapted.outputSize)}`:""}</span><button type="button" class="secondary" onclick="saveGeneratedDesignImage()">保存设计图</button></div></div>`}
+  catch(error){clearInterval(imageProgressTimer);if(error.message==="请先验证生图权限"){imageAuthKnown=false;openImageLogin(button);box.className="image-generate-state";box.innerHTML=`<b>需要重新验证</b><span>登录状态已失效，验证后会继续生成。</span>`}else{const networkFailed=/failed to fetch|networkerror|load failed|网络连接失败/i.test(error.message);box.className="image-generate-state";box.innerHTML=networkFailed?`<b>本地服务未连接</b><span>无法连接生图服务，请确认 KBITUI 服务正在运行后重试。当前表单内容不会丢失。</span>`:`<b>生成失败</b><span>${escapeHtml(error.message)}。请检查生图通道、模型名与余额后重试。</span>`}}
+  finally{button.disabled=false;button.textContent="生成设计图"}
+}
+function saveGeneratedDesignImage(){if(!generatedDesignImage)return;const a=document.createElement("a");a.href=generatedDesignImage;a.download=`${safeName()}_AI设计图.png`;a.target="_blank";a.rel="noopener";a.click()}
+function buildPPTContent(){const type=document.getElementById("designType").value,dynamic=configs[type].map((f,i)=>`<tr><th>${escapeHtml(f[0])}</th><td>${escapeHtml(dynamicValue(f,i)).replace(/\n/g,"<br>")}</td></tr>`).join(""),cover=uploadedImages[0]?`<img src="${uploadedImages[0].data}" class="hero">`:"";return `<!doctype html><html><head><meta charset="utf-8"><style>@page{size:13.333in 7.5in;margin:0}body{margin:0;font-family:"Microsoft YaHei",Arial;color:#172033}.slide{box-sizing:border-box;width:13.333in;height:7.5in;padding:.65in .8in;page-break-after:always;position:relative;overflow:hidden;background:#fff}.slide:before{content:"";position:absolute;left:0;top:0;bottom:0;width:.14in;background:#155eef}h1{font-size:36pt;margin:1.2in 0 .18in;color:#102a56}h2{font-size:26pt;margin:0 0 .3in;color:#153d74}.sub{font-size:18pt;color:#637083}.tag{display:inline-block;background:#eaf1ff;color:#155eef;padding:.08in .18in;border-radius:.08in;font-weight:bold}.big{font-size:22pt;line-height:1.5;max-width:8.8in}.grid{display:grid;grid-template-columns:1fr 1fr;gap:.18in}.card{background:#f5f8fc;border:1px solid #dce5f1;border-radius:.12in;padding:.2in;min-height:.8in}.card b{display:block;color:#66758c;font-size:12pt;margin-bottom:.07in}.card span{font-size:17pt}.colors i{display:inline-block;width:.4in;height:.4in;border-radius:.08in;margin-right:.08in;vertical-align:middle}table{border-collapse:collapse;width:100%;font-size:13pt}th,td{border-bottom:1px solid #dce5f1;padding:.1in;text-align:left;vertical-align:top}th{width:28%;color:#5e6c82}.hero{position:absolute;right:.7in;bottom:.65in;width:4.2in;height:3.2in;object-fit:cover;border-radius:.16in}.foot{position:absolute;right:.7in;bottom:.3in;font-size:10pt;color:#8a96a8}</style></head><body><section class="slide"><span class="tag">KBIT UI DESIGN BRIEF</span><h1>${escapeHtml(val("projectName")||"UI 设计需求汇报")}</h1><div class="sub">${escapeHtml(val("productName"))}<br>${escapeHtml(val("slogan"))}</div>${cover}<div class="foot">${new Date().toLocaleDateString("zh-CN")}</div></section><section class="slide"><h2>01 项目概况</h2><div class="big">${escapeHtml(val("summary")||"待补充项目摘要")}</div><div class="grid" style="margin-top:.35in"><div class="card"><b>所属行业</b><span>${escapeHtml(val("industry"))}</span></div><div class="card"><b>设计类型</b><span>${escapeHtml(document.getElementById("designType").selectedOptions[0].text)}</span></div><div class="card"><b>设计重点</b><span>${escapeHtml(val("focus"))}</span></div><div class="card"><b>页面氛围</b><span>${escapeHtml(val("mood"))}</span></div></div></section><section class="slide"><h2>02 平台、内容与目标尺寸</h2><table>${dynamic}</table></section><section class="slide"><h2>03 视觉方向</h2><div class="colors"><i style="background:${val("primaryColor")}"></i><b>主色 ${escapeHtml(val("primaryColor"))}</b>　${secondaryColors().map(c=>`<i style="background:${c}"></i>${c}`).join("　")}</div><div class="grid" style="margin-top:.35in"><div class="card"><b>整体风格</b><span>${escapeHtml(checked("style"))}</span></div><div class="card"><b>版式偏好</b><span>${escapeHtml(val("layout"))}</span></div><div class="card"><b>图形风格</b><span>${escapeHtml(val("graphic"))}</span></div><div class="card"><b>配色说明</b><span>${escapeHtml(val("color"))}</span></div></div></section><section class="slide"><h2>04 约束与交付</h2><div class="grid"><div class="card"><b>必须遵循</b><span>${escapeHtml(val("constraints"))}</span></div><div class="card"><b>适配要求</b><span>${escapeHtml(val("responsive"))}</span></div><div class="card"><b>明确禁止</b><span>${escapeHtml(val("forbidden"))}</span></div><div class="card"><b>参考素材</b><span>${uploadedImages.length} 张</span></div><div class="card" style="grid-column:1/-1"><b>AI 输出</b><span>${escapeHtml(checked("outputs"))}</span></div></div></section></body></html>`}
+function exportPPT(returnContent=false){generateBrief();const content=`\ufeff${buildPPTContent()}`;if(returnContent)return content;download(`${safeName()}_设计需求汇报.ppt`,content,"application/vnd.ms-powerpoint;charset=utf-8")}
+function exportCSV(){
+  generateBrief();const type=document.getElementById("designType").value;
+  const groups=[["项目基础",[["项目名称",val("projectName")],["产品 / 主题",val("productName")],["宣传语",val("slogan")],["项目摘要",val("summary")],["所属行业",val("industry")],["设计类型",document.getElementById("designType").selectedOptions[0].text]]],["平台与内容",configs[type].map((f,i)=>[f[0],dynamicValue(f,i)])],["视觉方向",[["整体风格",checked("style")],["页面氛围",val("mood")],["主色",val("primaryColor")],["辅色",val("secondaryColor")],["配色说明",val("color")],["版式偏好",val("layout")],["图形风格",val("graphic")],["重点突出",val("focus")]]],["约束与交付",[["必须遵循",val("constraints")],["适配要求",val("responsive")],["现有素材",val("assets")],["明确禁止",val("forbidden")],["AI 输出",checked("outputs")],["参考图片",`${uploadedImages.length} 张`],["补充要求",val("outputNotes")]]]];
+  const body=groups.map(([title,items])=>`<tr class="section"><td colspan="2">${escapeHtml(title)}</td></tr>`+items.map(([k,v])=>`<tr class="${["项目名称","设计类型","重点突出","AI 输出"].includes(k)?"key":""}"><td>${escapeHtml(k)}</td><td>${escapeHtml(String(v||"—")).replace(/\n/g,"<br>")}</td></tr>`).join("")).join("");
+  const attachmentHtml=uploadedImages.length?`<tr class="section"><td colspan="2">参考素材附件（${uploadedImages.length} 张）</td></tr>`+uploadedImages.map((img,i)=>`<tr><td>参考图 ${i+1}<br>${escapeHtml(img.name)}</td><td><img src="${img.data}" style="max-width:260px;max-height:180px;border:1px solid #dfe5ee;padding:4px"></td></tr>`).join(""):`<tr class="section"><td colspan="2">参考素材附件</td></tr><tr><td>图片</td><td>未上传参考素材</td></tr>`;
+  const secondaryPreview=secondaryColors().map(c=>`<span style="background:${c}"></span> ${c}`).join("　");
+  const html=`<!doctype html><html><head><meta charset="utf-8"><style>@page{margin:16mm}body{font-family:"Microsoft YaHei",Arial;color:#172033}table{border-collapse:collapse;width:100%;table-layout:fixed}.brand td{background:#155eef;color:white;padding:20px;font-size:22px;font-weight:bold}.meta td{background:#eef4ff;color:#516078;padding:9px 14px;border:1px solid #d8e2f1}.section td{background:#e8effb;color:#173b70;font-size:15px;font-weight:bold;padding:10px 12px;border:1px solid #cbd8eb}.key td{background:#fff8e8;font-weight:bold}.key td:first-child{color:#9a6100}td{padding:9px 12px;border:1px solid #dfe5ee;vertical-align:top;line-height:1.6}td:first-child{width:22%;background:#f8fafc;color:#607089;font-weight:bold}.colors span{display:inline-block;width:18px;height:18px}</style></head><body><table><tr class="brand"><td colspan="2">KBIT · UI 设计需求表</td></tr><tr class="meta"><td>项目</td><td>${escapeHtml(safeName())}</td></tr><tr class="meta"><td>生成日期</td><td>${new Date().toLocaleDateString("zh-CN")}</td></tr>${body}<tr class="section"><td colspan="2">色彩预览</td></tr><tr><td>主色 / 辅色</td><td class="colors"><span style="background:${val("primaryColor")}"></span> ${val("primaryColor")}　 ${secondaryPreview||"未选择辅色"}</td></tr>${attachmentHtml}</table></body></html>`;
+  if(arguments[0]===true)return `\ufeff${html}`;download(`${safeName()}_设计需求.xls`,`\ufeff${html}`,"application/vnd.ms-excel;charset=utf-8");
+}
+async function exportImage(returnBlob=false){
+  generateBrief();
+  const c=document.createElement("canvas"),w=1240,h=6000,p=88;c.width=w;c.height=h;const g=c.getContext("2d");
+  g.fillStyle="#ffffff";g.fillRect(0,0,w,h);g.fillStyle="#1d4ed8";g.fillRect(0,0,18,h);
+  g.fillStyle="#111827";g.font="700 44px sans-serif";g.fillText("UI 设计需求概览",p,112);
+  g.fillStyle="#6b7280";g.font="18px sans-serif";g.fillText("UI DESIGN BRIEF",p,148);
+  g.textAlign="right";g.fillText(new Date().toLocaleDateString("zh-CN"),w-p,112);g.textAlign="left";
+  g.strokeStyle="#dbe3ef";g.lineWidth=2;g.beginPath();g.moveTo(p,178);g.lineTo(w-p,178);g.stroke();
+  const type=document.getElementById("designType").value;
+  g.fillStyle="#f3f7ff";roundRect(g,p,204,w-p*2,92,14);g.fill();g.fillStyle="#155eef";roundRect(g,p+18,222,190,34,17);g.fill();g.fillStyle="#fff";g.font="700 16px sans-serif";g.fillText(document.getElementById("designType").selectedOptions[0].text,p+34,244);
+  g.fillStyle="#64748b";g.font="15px sans-serif";g.fillText("设计重点",p+232,228);g.fillStyle="#172033";g.font="700 18px sans-serif";drawWrapped(g,val("focus")||val("summary")||"待补充项目重点",p+232,253,680,23);
+  const colorStart=w-p-250;g.fillStyle=val("primaryColor");roundRect(g,colorStart,222,38,38,8);g.fill();secondaryColors().forEach((color,i)=>{g.fillStyle=color;roundRect(g,colorStart+50+i*38,222,30,38,7);g.fill()});g.fillStyle="#64748b";g.font="13px sans-serif";g.textAlign="right";g.fillText(`主色 + ${secondaryColors().length} 个辅色`,w-p,282);g.textAlign="left";
+  const dynamic=configs[type].map((f,i)=>[f[0],dynamicValue(f,i)]);
+  const sections=[
+    ["01  项目基础",[["项目名称",val("projectName")],["产品 / 主题",val("productName")],["所属行业",val("industry")],["设计类型",document.getElementById("designType").selectedOptions[0].text],["项目摘要",val("summary")],["宣传语",val("slogan")]]],
+    ["02  平台与内容",dynamic],
+    ["03  视觉方向",[["整体风格",checked("style")],["页面氛围",val("mood")],["色彩倾向",colorValue()],["版式偏好",val("layout")],["图形风格",val("graphic")],["重点突出",val("focus")]]],
+    ["04  约束与交付",[["适配要求",val("responsive")],["必须遵循",val("constraints")],["明确禁止",val("forbidden")],["AI 输出",checked("outputs")],["参考附件",`${uploadedImages.length} 张图片`],["补充要求",val("outputNotes")]]]
+  ];
+  let y=326;sections.forEach(([title,items])=>{g.fillStyle="#eef3fa";g.fillRect(p,y,w-p*2,42);g.fillStyle="#173b70";g.font="700 20px sans-serif";g.fillText(title,p+16,y+27);y+=56;for(let i=0;i<items.length;i+=2){const left=items[i],right=items[i+1];const rowH=Math.max(measureCell(g,left,455),right?measureCell(g,right,455):58);drawPrintCell(g,left,p,y,455,rowH);if(right)drawPrintCell(g,right,p+520,y,455,rowH);y+=rowH+10}y+=14});
+  if(uploadedImages.length){g.fillStyle="#eef3fa";g.fillRect(p,y,w-p*2,42);g.fillStyle="#173b70";g.font="700 20px sans-serif";g.fillText(`05  参考素材（${uploadedImages.length} 张）`,p+16,y+27);y+=60;const thumbs=await Promise.all(uploadedImages.map(x=>loadCanvasImage(x.data).catch(()=>null)));for(let i=0;i<thumbs.length;i++){const col=i%3,row=Math.floor(i/3),tx=p+col*350,ty=y+row*245;g.fillStyle="#f8fafc";roundRect(g,tx,ty,320,220,12);g.fill();if(thumbs[i])drawCover(g,thumbs[i],tx+8,ty+8,304,168,8);g.fillStyle="#475569";g.font="15px sans-serif";g.fillText(`参考图 ${i+1} · ${truncateText(uploadedImages[i].name,22)}`,tx+10,ty+202)}y+=Math.ceil(thumbs.length/3)*245+18}
+  const finalH=Math.max(1754,Math.min(h,y+130)),out=document.createElement("canvas");out.width=w;out.height=finalH;const o=out.getContext("2d");o.fillStyle="#fff";o.fillRect(0,0,w,finalH);o.drawImage(c,0,0,w,finalH,0,0,w,finalH);o.fillStyle="#1d4ed8";o.fillRect(0,0,18,finalH);o.strokeStyle="#dbe3ef";o.beginPath();o.moveTo(p,finalH-92);o.lineTo(w-p,finalH-92);o.stroke();o.fillStyle="#64748b";o.font="15px sans-serif";o.fillText("由 KBIT UI Design Brief 自动生成 · 已包含本次上传的参考素材",p,finalH-58);o.textAlign="right";o.fillText(`${safeName()}  ·  ${document.getElementById("designType").selectedOptions[0].text}`,w-p,finalH-58);
+  if(returnBlob)return await new Promise(resolve=>out.toBlob(resolve,"image/png"));const a=document.createElement("a");a.download=`${safeName()}_需求概览_完整长图.png`;a.href=out.toDataURL("image/png");a.click();
+}
+function roundRect(x,a,b,w,h,r){x.beginPath();x.roundRect(a,b,w,h,r)}
+function wrapLines(x,text,max){const lines=[];String(text).split("\n").forEach(paragraph=>{let cur="";for(const ch of paragraph){if(cur&&x.measureText(cur+ch).width>max){lines.push(cur);cur=ch}else cur+=ch}lines.push(cur||" ")});return lines}
+function drawWrapped(x,text,a,b,max,line){const lines=wrapLines(x,text,max);lines.forEach((t,i)=>x.fillText(t,a,b+i*line));return b+(lines.length-1)*line}
+function measureCell(g,item,width){g.font="19px sans-serif";const lines=wrapLines(g,item?.[1]||"—",width-28).length;return Math.max(58,38+lines*25)}
+function drawPrintCell(g,item,x,y,w,h){g.strokeStyle="#e2e8f0";g.lineWidth=1;g.strokeRect(x,y,w,h);g.fillStyle="#64748b";g.font="15px sans-serif";g.fillText(item[0],x+14,y+22);g.fillStyle="#111827";g.font="19px sans-serif";drawWrapped(g,item[1]||"—",x+14,y+48,w-28,25)}
+function loadCanvasImage(src){return new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=reject;img.src=src})}
+function drawCover(g,img,x,y,w,h,r){g.save();roundRect(g,x,y,w,h,r);g.clip();const scale=Math.max(w/img.width,h/img.height),dw=img.width*scale,dh=img.height*scale;g.drawImage(img,x+(w-dw)/2,y+(h-dh)/2,dw,dh);g.restore()}
+function truncateText(text,max){return text.length>max?text.slice(0,max-1)+"…":text}
+async function downloadPackage(button){
+  generateBrief();if(button){button.disabled=true;button.textContent="正在打包…"}
+  try{const project=safeName(),root=`${project}_设计任务包/`,markdown=document.getElementById("output").textContent,excel=exportCSV(true),png=await exportImage(true),files=[];
+    files.push({name:root+`${project}_design.md`,data:new TextEncoder().encode(markdown)});
+    files.push({name:root+`${project}_设计需求.xls`,data:new TextEncoder().encode(excel)});
+    files.push({name:root+`${project}_需求概览_完整长图.png`,data:new Uint8Array(await png.arrayBuffer())});
+    uploadedImages.forEach((img,i)=>files.push({name:root+`参考素材/参考图_${String(i+1).padStart(2,"0")}_${safeFileName(img.name)}`,data:dataUrlBytes(img.data)}));
+    const manifest={项目名称:val("projectName"),产品名称:val("productName"),设计类型:document.getElementById("designType").selectedOptions[0].text,目标尺寸:selectedSizes(),主色:val("primaryColor"),辅色:secondaryColors(),参考图片:uploadedImages.map(x=>x.name),生成时间:new Date().toISOString()};
+    files.push({name:root+"任务清单.json",data:new TextEncoder().encode(JSON.stringify(manifest,null,2))});
+    const readme=`KBIT UI Design Brief 设计任务包\n\n1. ${project}_design.md：提交给 AI 的完整设计需求。\n2. ${project}_设计需求.xls：便于查看和编辑的设计需求表。\n3. ${project}_需求概览_完整长图.png：适合预览、打印和汇报。\n4. 参考素材：本次上传的原始图片。\n5. 任务清单.json：项目、尺寸、配色和附件索引。\n\n建议：将整个文件夹一起提交给 Codex，并明确要求“基于 design.md 与参考素材生成高保真 UI，不机械复刻参考图”。`;
+    files.push({name:root+"README_使用说明.txt",data:new TextEncoder().encode(readme)});
+    const zip=buildZip(files);recordClientUsage("一键打包下载",{projectName:val("projectName"),designType:document.getElementById("designType").selectedOptions[0].text,brief:markdown,referenceImageCount:uploadedImages.length});download(`${project}_设计任务包.zip`,zip,"application/zip");
+  }catch(error){alert("打包失败，请检查图片文件后重试。") }finally{if(button){button.disabled=false;button.textContent="一键打包下载"}}
+}
+function safeFileName(name){return String(name||"image.png").replace(/[\\/:*?"<>|]/g,"-")}
+function dataUrlBytes(data){const base64=data.split(",")[1]||"",binary=atob(base64),bytes=new Uint8Array(binary.length);for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);return bytes}
+const crcTable=(()=>{const table=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=(c&1)?0xedb88320^(c>>>1):c>>>1;table[n]=c>>>0}return table})();
+function crc32(bytes){let c=0xffffffff;for(const b of bytes)c=crcTable[(c^b)&255]^(c>>>8);return(c^0xffffffff)>>>0}
+function u16(n){return new Uint8Array([n&255,(n>>>8)&255])}function u32(n){return new Uint8Array([n&255,(n>>>8)&255,(n>>>16)&255,(n>>>24)&255])}
+function joinBytes(parts){const size=parts.reduce((n,p)=>n+p.length,0),out=new Uint8Array(size);let offset=0;for(const p of parts){out.set(p,offset);offset+=p.length}return out}
+function zipTime(){const d=new Date(),time=(d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1),date=((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate();return{time,date}}
+function buildZip(files){const local=[],central=[];let offset=0;const stamp=zipTime();for(const file of files){const name=new TextEncoder().encode(file.name),data=file.data instanceof Uint8Array?file.data:new Uint8Array(file.data),crc=crc32(data),header=joinBytes([u32(0x04034b50),u16(20),u16(0x0800),u16(0),u16(stamp.time),u16(stamp.date),u32(crc),u32(data.length),u32(data.length),u16(name.length),u16(0),name]),record=joinBytes([header,data]);local.push(record);central.push(joinBytes([u32(0x02014b50),u16(20),u16(20),u16(0x0800),u16(0),u16(stamp.time),u16(stamp.date),u32(crc),u32(data.length),u32(data.length),u16(name.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(offset),name]));offset+=record.length}const center=joinBytes(central),end=joinBytes([u32(0x06054b50),u16(0),u16(0),u16(files.length),u16(files.length),u32(center.length),u32(offset),u16(0)]);return joinBytes([...local,center,end])}
+function formData(){const data={};document.querySelectorAll('#uiForm input:not([type=file]),#uiForm select,#uiForm textarea,#sizeDrawerMask input:not([type=file])').forEach(e=>{if(e.type==="checkbox")data[e.id||e.value]=e.checked;else if(e.id)data[e.id]=e.value});return data}
+function currentSnapshot(){return{fields:formData(),images:uploadedImages,customSizes,selectedSizeValues:selectedSizes(),updatedAt:new Date().toISOString()}}
+function applySnapshot(d){if(!d)return;customSizes=d.customSizes||[];sizeSelections=new Set(d.selectedSizeValues||[]);const type=d.fields?.designType;if(type)document.getElementById("designType").value=type;renderDynamicFields();Object.entries(d.fields||{}).forEach(([k,v])=>{const e=document.getElementById(k)||[...document.querySelectorAll('#uiForm input[type=checkbox]')].find(x=>x.value===k);if(e){if(e.type==="checkbox")e.checked=v;else e.value=v}});uploadedImages=d.images||[];renderPreviews();toggleOtherStyle();renderColorPalettes();syncCustomSelects();renderSizeOptions();updateSizeSummary();updateFormUI();saveDraft()}
+const libraryDB=new Promise((resolve,reject)=>{const request=indexedDB.open("KBITUI_LIBRARY",1);request.onupgradeneeded=()=>{const db=request.result;if(!db.objectStoreNames.contains("tasks"))db.createObjectStore("tasks",{keyPath:"id"});if(!db.objectStoreNames.contains("assets"))db.createObjectStore("assets",{keyPath:"id"})};request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error)});
+async function dbStore(name,mode="readonly"){const db=await libraryDB;return db.transaction(name,mode).objectStore(name)}
+async function dbPut(name,value){const store=await dbStore(name,"readwrite");return new Promise((resolve,reject)=>{const r=store.put(value);r.onsuccess=()=>resolve(value);r.onerror=()=>reject(r.error)})}
+async function dbAll(name){const store=await dbStore(name);return new Promise((resolve,reject)=>{const r=store.getAll();r.onsuccess=()=>resolve(r.result||[]);r.onerror=()=>reject(r.error)})}
+async function dbGet(name,id){const store=await dbStore(name);return new Promise((resolve,reject)=>{const r=store.get(id);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+async function dbRemove(name,id){const store=await dbStore(name,"readwrite");return new Promise((resolve,reject)=>{const r=store.delete(id);r.onsuccess=resolve;r.onerror=()=>reject(r.error)})}
+function openManager(tab="tasks"){document.getElementById("managerMask").classList.remove("hidden");showManagerTab(tab)}
+function closeManager(event){if(event&&event.target!==document.getElementById("managerMask"))return;document.getElementById("managerMask").classList.add("hidden")}
+async function showManagerTab(tab){document.getElementById("taskTab").classList.toggle("active",tab==="tasks");document.getElementById("assetTab").classList.toggle("active",tab==="assets");const body=document.getElementById("managerBody");body.innerHTML='<div class="manager-empty">正在读取本地数据…</div>';if(tab==="tasks")await renderTasks();else await renderAssets()}
+async function renderTasks(){const items=(await dbAll("tasks")).sort((a,b)=>String(b.updatedAt).localeCompare(String(a.updatedAt))),body=document.getElementById("managerBody");body.innerHTML=`<div class="manager-actions"><button type="button" class="primary" onclick="saveCurrentTask()">保存当前任务</button><button type="button" class="ghost" onclick="exportLocalLibrary()">导出本地备份</button></div><div class="manager-note">任务和附件只保存在当前浏览器。建议定期导出备份；清理浏览器网站数据前请先备份。</div><div class="manager-list">${items.length?items.map(x=>`<div class="manager-item"><div style="width:64px;height:54px;border-radius:8px;background:#eaf1ff;color:#155eef;display:grid;place-items:center;font-weight:800">任务</div><div class="manager-item-copy"><b>${escapeHtml(x.name)}</b><span>${escapeHtml(x.type||"")} · ${new Date(x.updatedAt).toLocaleString("zh-CN")} · ${x.snapshot?.images?.length||0} 张附件</span></div><div class="manager-item-actions"><button type="button" class="secondary" onclick="loadTask('${x.id}')">打开</button><button type="button" class="ghost danger-text" onclick="deleteTask('${x.id}')">删除</button></div></div>`).join(""):'<div class="manager-empty">还没有保存的任务</div>'}</div>`}
+async function saveCurrentTask(){const name=prompt("任务名称",val("projectName")||"未命名设计任务");if(!name)return;await dbPut("tasks",{id:`task_${Date.now()}`,name:name.trim(),type:document.getElementById("designType").selectedOptions[0].text,updatedAt:new Date().toISOString(),snapshot:currentSnapshot()});recordClientUsage("保存本地任务",{taskName:name.trim(),projectName:val("projectName"),designType:document.getElementById("designType").selectedOptions[0].text,brief:document.getElementById("output").textContent});await renderTasks()}
+async function loadTask(id){const task=await dbGet("tasks",id);if(!task)return;applySnapshot(task.snapshot);closeManager();window.scrollTo({top:0,behavior:"smooth"})}
+async function deleteTask(id){if(!confirm("确定删除这个本地任务吗？"))return;await dbRemove("tasks",id);await renderTasks()}
+async function renderAssets(){const items=(await dbAll("assets")).sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt))),estimate=await navigator.storage?.estimate?.(),used=estimate?.usage?`${(estimate.usage/1024/1024).toFixed(1)} MB`:"未知",body=document.getElementById("managerBody");body.innerHTML=`<div class="manager-actions"><button type="button" class="primary" onclick="document.getElementById('assetUpload').click()">上传到本地资产库</button><button type="button" class="secondary" onclick="saveCurrentImagesToAssets()">保存当前参考图</button><button type="button" class="ghost" onclick="exportLocalLibrary()">导出本地备份</button></div><div class="manager-note">使用浏览器 IndexedDB，不占 GitHub 空间。当前浏览器站点数据约使用 ${used}；不同浏览器和电脑之间不会自动同步。</div><div class="manager-list">${items.length?items.map(x=>`<div class="manager-item"><img src="${escapeHtml(x.data)}" alt=""><div class="manager-item-copy"><b>${escapeHtml(x.name)}</b><span>${new Date(x.createdAt).toLocaleString("zh-CN")}</span></div><div class="manager-item-actions"><button type="button" class="secondary" onclick="useAsset('${x.id}')">加入当前任务</button><button type="button" class="ghost danger-text" onclick="deleteAsset('${x.id}')">删除</button></div></div>`).join(""):'<div class="manager-empty">资产库为空，可以上传图片或保存当前参考图</div>'}</div>`}
+document.getElementById("assetUpload").addEventListener("change",async e=>{for(const file of [...e.target.files].filter(x=>x.type.startsWith("image/"))){if(file.size>12*1024*1024)continue;await dbPut("assets",{id:`asset_${Date.now()}_${Math.random().toString(36).slice(2)}`,name:file.name,data:await fileAsDataURL(file),createdAt:new Date().toISOString()})}e.target.value="";await renderAssets()});
+async function saveCurrentImagesToAssets(){for(const image of uploadedImages)await dbPut("assets",{id:`asset_${Date.now()}_${Math.random().toString(36).slice(2)}`,name:image.name,data:image.data,createdAt:new Date().toISOString()});await renderAssets()}
+async function useAsset(id){const asset=await dbGet("assets",id);if(!asset)return;if(uploadedImages.length>=9){alert("当前任务最多放 9 张参考图");return}uploadedImages.push({name:asset.name,data:asset.data});renderPreviews();updateFormUI();saveDraft();closeManager()}
+async function deleteAsset(id){if(!confirm("确定从本地资产库删除吗？"))return;await dbRemove("assets",id);await renderAssets()}
+async function exportLocalLibrary(){const backup={version:1,exportedAt:new Date().toISOString(),tasks:await dbAll("tasks"),assets:await dbAll("assets")};download(`KBITUI_本地备份_${new Date().toISOString().slice(0,10)}.json`,JSON.stringify(backup),"application/json;charset=utf-8")}
+function saveDraft(){try{localStorage.setItem("uiBriefDraft",JSON.stringify({fields:formData(),images:uploadedImages,customSizes,selectedSizeValues:selectedSizes()}))}catch(e){}}
+function restoreDraft(){try{const d=JSON.parse(localStorage.getItem("uiBriefDraft"));if(!d)return;customSizes=d.customSizes||[];sizeSelections=new Set(d.selectedSizeValues||[]);Object.entries(d.fields||{}).forEach(([k,v])=>{const e=document.getElementById(k)||[...document.querySelectorAll('input[type=checkbox]')].find(x=>x.value===k);if(e){if(e.type==="checkbox")e.checked=v;else e.value=v}});renderDynamicFields();Object.entries(d.fields||{}).forEach(([k,v])=>{const e=document.getElementById(k)||[...document.querySelectorAll('input[type=checkbox]')].find(x=>x.value===k);if(e){if(e.type==="checkbox")e.checked=v;else e.value=v}});uploadedImages=d.images||[];renderPreviews();toggleOtherStyle();renderColorPalettes();syncCustomSelects();updateSizeSummary()}catch(e){}}
+function clearForm(){if(!confirm("确定清空所有内容和本机草稿吗？"))return;document.getElementById("uiForm").reset();uploadedImages=[];customSizes=[];sizeSelections=new Set();localStorage.removeItem("uiBriefDraft");renderDynamicFields();renderPreviews();renderColorPalettes();syncCustomSelects();updateFormUI()}
+const demoProfiles={
+miniapp:{projectName:"城市便民服务小程序",productName:"掌上服务站",slogan:"办事更简单",summary:"面向市民的一站式政务与生活服务小程序。",industry:"政务",dynamic:["微信小程序","首页、办事、进度、我的","授权登录 → 选择事项 → 提交材料 → 查询进度","首页、办事、进度、我的","登录、定位、相机、文件上传、订阅消息","未授权、加载、空、错误、提交成功"],sizes:["微信全面屏 750×1624","iPhone 13/14 390×844","Android 标准 360×800"]},
+nativeapp:{projectName:"城市应急巡查 App",productName:"掌上应急",slogan:"隐患随手报，处置全闭环",summary:"面向基层巡查人员的隐患上报、任务处置与应急协同 App。",industry:"政务",dynamic:["iOS / Android 双端","首页、巡查、上报、任务、我的","接收任务 → 现场巡查 → 拍照定位 → 提交隐患 → 跟踪处置","相机、定位、通知、相册、离线缓存","遵循 iOS HIG 与 Material Design，体现政务可信感","首次启动、权限拒绝、离线、加载、空、上报成功"],sizes:["iPhone 16 Pro 402×874","Android 标准 360×800","iPad Air 820×1180"]},
+web:{projectName:"融媒体内容指挥平台",productName:"全媒体策采编发平台",slogan:"一体策划，多端协同，全网传播",summary:"面向融媒体中心编辑、记者与管理人员的选题策划、内容生产和传播分析平台。",industry:"媒体",dynamic:["管理后台 / Web 应用","指挥总览、选题、任务、稿件、素材、审核、发布、传播分析","创建选题 → 分派任务 → 采编协作 → 多级审核 → 多端发布 → 复盘传播","侧边栏 + 顶部指挥栏 + 自适应工作区","政务内网 Chrome / Edge，兼容常用办公分辨率","Hover、Focus、Loading、Empty、Error、审核与权限状态"],sizes:["1440×1080 Medium","1920×1080 Full HD","390×844 Medium","820×1024 Medium"]},
+h5:{projectName:"拍在云南影视服务平台 H5 优化",productName:"拍在云南@昆明影视服务数据资源中心",slogan:"全面了解云南，快捷选取服务，轻松开启拍摄",summary:"面向来滇影视剧组与影视从业者的一站式移动端服务平台。",industry:"媒体",dynamic:["移动端影视服务数据资源平台","首页、服务、政策、我的","影视企业、外景地、案例、演职人员、服务机构、资讯","浏览 → 查看详情 → 登录 → 申请或预约 → 查询进度","验证码登录；申请、收藏、预约、资料","微信分享、地图、导航、电话、外部网页","加载、空、错误、未登录、提交成功、预约结果"],sizes:["390×844 iPhone 13/14","393×852 iPhone Pro","430×932 Pro Max","750×1624 全面屏设计稿"]},
+page:{projectName:"惠企政策专题详情页",productName:"政策直达",slogan:"政策找企业，服务送上门",summary:"面向企业用户清晰解读惠企政策并引导在线申报的专题页面。",industry:"政务",dynamic:["惠企政策详情页","帮助企业快速判断适用条件并完成申报","政策摘要、适用对象、申报条件、所需材料、办理流程、咨询方式","目录锚点、材料下载、政策收藏、在线申报、电话咨询","默认、加载、政策失效、附件缺失、申报成功、错误"],sizes:["390×844","430×932","1440×900"]},
+logo:{projectName:"县级融媒体品牌标识",productName:"云上新城",slogan:"主流舆论阵地，综合服务平台",summary:"面向县级融媒体客户端、频道包装和政务新媒体矩阵的统一品牌标识。",industry:"媒体",dynamic:["云上新城","权威、亲和、具有地域识别度的主流媒体品牌","融合城市地标、传播声波与字母 Y 的核心意象","云上新城 YUNSHANG XINCHENG","客户端图标、演播室包装、网站、话筒标、活动物料"],sizes:["32×32 Favicon","512×512","1024×1024 App Icon","1200×300"]},
+icon:{projectName:"党建培训业务图标",productName:"智慧党建图标系统",slogan:"统一识别，清晰传达",summary:"覆盖党员教育、课程学习、在线测评和组织管理的一套政务图标。",industry:"政务",dynamic:["党课学习、课程资料、在线测评、学习排行、组织管理、数据统计","24 枚","侧边导航、业务入口、数据卡片、流程图","默认、悬停、选中、禁用"],sizes:["16×16","20×20","24×24","32×32","48×48"]},
+banner:{projectName:"全国两会新闻专题 Banner",productName:"奋进新征程",slogan:"聚焦全国两会 · 传递奋进强音",summary:"用于新闻客户端、网站首页和新媒体矩阵的重大主题报道视觉。",industry:"媒体",dynamic:["全国两会融媒体专题","聚焦全国两会 / 传递奋进强音","查看专题","人民大会堂、城市天际线、红色丝带、新闻现场元素","新闻网站首页、客户端焦点图、公众号、视频号"],sizes:["1920×600","1440×420","1080×1350 竖图","1200×630 OpenGraph"]},
+print:{projectName:"政务服务宣传月系列物料",productName:"高效办成一件事",slogan:"一次告知，一表申请，一窗受理",summary:"覆盖政务服务大厅、社区宣传栏和政策宣讲活动的系列印刷物料。",industry:"政务",dynamic:["系列海报 / 政策折页 / 易拉宝","高效办成一件事 / 活动时间地点 / 重点服务事项","大厅入口远距离、办事窗口、社区服务点、政策宣讲会","CMYK、300dpi、出血 3mm、安全边距 5mm","200g 铜版纸、哑膜；易拉宝写真覆膜","政务 Logo、主题主视觉、事项清单、二维码、咨询电话、主办单位","印刷 PDF / 可编辑源文件 / JPG 预览","政务标识规范准确，二维码周围留白，正文不小于 8pt"],sizes:["A2 420×594mm","A3 297×420mm","A4 三折 630×297mm","易拉宝 80×200cm"]},
+dashboard:{projectName:"城市运行指挥大屏",productName:"城市运行一张图",slogan:"全域感知，协同处置",summary:"面向指挥中心的城市运行数据可视化大屏。",industry:"政务",dynamic:["城市运行综合态势","事件、交通、客流、环境、处置效率","地图、趋势图、排行、指标卡、事件列表","指挥中心 LED 大屏","60 秒刷新；地图联动、区域筛选、事件下钻"],sizes:["1920×1080 Full HD","3840×2160 4K","7680×2160 双 4K"]},
+ppt:{projectName:"年度产品战略汇报",productName:"KBIT 2026 产品战略",slogan:"聚焦核心场景，建立增长飞轮",summary:"面向公司管理层的年度产品战略与资源决策汇报。",industry:"企业服务",dynamic:["年度战略汇报 / 管理层决策","公司管理层；明确年度优先级并批准核心资源投入","未来一年聚焦三类高价值场景，通过产品标准化提升交付效率与复购率","业务数据、客户反馈、市场分析、产品路线图、预算测算","15 页 / 20 分钟","市场变化 → 当前问题 → 战略选择 → 产品方案 → 资源计划 → 决策事项","封面、核心结论、市场背景、业务现状、关键问题、战略选择、产品路线图、资源计划、风险、决策事项","收入结构、客户分层、转化漏斗、路线图、资源投入对比","会议室 16:9 投屏 / PPTX 可编辑文件","需要逐页讲稿、数据来源与管理层可能提问"],sizes:["16:9 宽屏 1920×1080","会议屏 1920×1080","4K 发布会 3840×2160"]},
+system:{projectName:"企业级 Design System",productName:"KBIT Design System",slogan:"一致体验，高效协作",summary:"面向多业务 Web 产品的设计规范与组件系统。",industry:"企业服务",dynamic:["按钮、表单、导航、弹窗、卡片、表格、图表","Web / 小程序 / App","品牌色、字体、8pt 网格、命名规范","默认、悬停、按下、禁用、加载、错误","React / Vue / Ant Design"],sizes:["360 Mobile S","768 Tablet S","1280 Desktop S","1440 Desktop M","24×24 Icon"]}
+};
+function fillDemo(){
+  const type=document.getElementById("designType").value,profile=demoProfiles[type];if(!profile)return;if(!confirm(`将使用“${document.getElementById("designType").selectedOptions[0].text}”模拟数据覆盖当前内容，是否继续？`))return;
+  document.getElementById("uiForm").reset();uploadedImages=[];customSizes=[];sizeSelections=new Set();renderPreviews();
+  const demo={...profile,designType:type,mood:"专业、清晰、具有品牌辨识度",primaryColor:"#007aff",secondaryColor:"#ffbe00,#e64340,#f5f1e8",color:"主色用于关键操作，辅色用于强调与状态，浅色用于大面积背景",layout:"信息层级清晰、重点入口前置、留白舒适",graphic:"简洁线性图标，搭配高质量业务图片",focus:"核心任务、主要入口、关键转化按钮",references:"参考同类优秀产品的布局、信息层级和交互反馈",referenceFocus:"借鉴结构、节奏与组件逻辑，不复制品牌表达",avoidReference:"避免机械复刻和与业务无关的装饰",constraints:"文字对比度满足 WCAG AA，使用真实业务文案",responsive:"严格按所选目标尺寸输出并考虑安全区",assets:"品牌 Logo、业务图片、现有内容与规范",forbidden:"避免低对比度、小字号、过度渐变和无意义动效",outputNotes:"输出核心页面高保真稿，并覆盖加载、空、错误与成功状态。"};
+  Object.entries(demo).forEach(([id,value])=>{const e=document.getElementById(id);if(e&&!Array.isArray(value))e.value=value});renderDynamicFields();let demoIndex=0;configs[type].forEach((f,i)=>{if(f[1]!=="sizepicker"){const e=document.getElementById("dynamic_"+i);if(e)e.value=profile.dynamic[demoIndex++]||""}});profile.sizes.forEach(v=>sizeSelections.add(v));renderSizeOptions();
+  ["现代简约","年轻化","高级感"].forEach(v=>{const e=[...document.querySelectorAll('[data-group="style"] input')].find(x=>x.value===v);if(e)e.checked=true});
+  ["design.md","项目需求理解","信息架构 IA","页面清单","用户流程","Design Token","组件清单","高保真效果图Prompt","验收要点"].forEach(v=>{const e=[...document.querySelectorAll('[data-group="outputs"] input')].find(x=>x.value===v);if(e)e.checked=true});
+  toggleOtherStyle();renderColorPalettes();syncCustomSelects();updateSizeSummary();generateBrief();saveDraft();updateFormUI();window.scrollTo({top:0,behavior:"smooth"});
+}
+function updateFormUI(){
+  const fields=[...document.querySelectorAll('#uiForm input:not([type="checkbox"]):not([type="file"]):not([type="hidden"]),#uiForm select,#uiForm textarea')].filter(e=>e.offsetParent!==null);
+  fields.forEach(e=>e.classList.toggle("has-value",!!e.value.trim()));
+  updateFieldStates();
+  const filled=fields.filter(e=>e.value.trim()).length;
+  const groups=["style","outputs"],groupFilled=groups.filter(g=>document.querySelector(`[data-group="${g}"] input:checked`)).length;
+  const percent=Math.min(100,Math.round((filled+groupFilled)/(fields.length+groups.length)*100));
+  document.getElementById("progressBar").style.width=percent+"%";document.getElementById("progressText").textContent=`已填写 ${percent}%`;
+  const active=Math.min(3,Math.floor(percent/25));document.querySelectorAll(".step").forEach((s,i)=>s.classList.toggle("active",i<=active));
+  document.querySelectorAll("textarea").forEach(e=>{e.style.height="auto";e.style.height=Math.max(92,e.scrollHeight)+"px"});
+  generateBrief();
+  scheduleDraftSave();
+}
+function updateFieldStates(){
+  const requiredIds=new Set(["projectName","summary","industry","designType","focus"]);
+  document.querySelectorAll("#uiForm .field").forEach(field=>{
+    const controls=[...field.querySelectorAll('input:not([type="file"]),select,textarea')].filter(e=>e.offsetParent!==null||e.type==="hidden");
+    const isSize=field.classList.contains("size-field"),isStyle=Boolean(field.querySelector('[data-group="style"]'));
+    const filled=isSize?selectedSizes().length>0:isStyle?Boolean(field.querySelector('[data-group="style"] input:checked')):controls.some(e=>e.type==="checkbox"?e.checked:String(e.value||"").trim());
+    const dynamicFirst=field.querySelector("#dynamic_0"),required=[...controls].some(e=>requiredIds.has(e.id))||Boolean(dynamicFirst)||isSize||isStyle;
+    field.classList.toggle("is-filled",filled);field.classList.toggle("is-required",required);field.classList.toggle("is-missing",required&&!filled);
+    controls.forEach(e=>{if(required&&["INPUT","TEXTAREA","SELECT"].includes(e.tagName)&&e.type!=="hidden"&&e.type!=="checkbox")e.setAttribute("aria-required","true")});
+  });
+}
+var draftSaveTimer=0,liveBriefFrame=0;
+function scheduleDraftSave(){clearTimeout(draftSaveTimer);draftSaveTimer=setTimeout(saveDraft,350)}
+function scheduleLiveBrief(){cancelAnimationFrame(liveBriefFrame);liveBriefFrame=requestAnimationFrame(updateFormUI)}
+function isBriefControl(target){return target instanceof Element&&Boolean(target.closest("#uiForm, #sizeDrawerMask"))}
+document.addEventListener("input",e=>{if(isBriefControl(e.target))scheduleLiveBrief()},true);
+document.addEventListener("change",e=>{if(isBriefControl(e.target))scheduleLiveBrief()},true);
+restoreDraft();updateFormUI();
+</script>
+</body>
+</html>
