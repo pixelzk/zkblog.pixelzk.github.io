@@ -349,6 +349,7 @@
       <button type="button" class="ghost" onclick="exportCSV()">导出设计表格 Excel</button>
       <button type="button" class="ghost" onclick="exportImage()">导出需求概览 PNG</button>
       <button type="button" class="secondary" onclick="downloadMarkdown()">下载 design.md</button>
+      <button type="button" class="primary" onclick="downloadPackage(this)">一键打包下载</button>
       <button type="button" class="primary" onclick="generateBrief()">生成 AI 设计任务包</button>
       <button type="button" class="ghost danger-text" onclick="clearForm()">清空</button>
     </div>
@@ -625,9 +626,9 @@ function exportCSV(){
   const attachmentHtml=uploadedImages.length?`<tr class="section"><td colspan="2">参考素材附件（${uploadedImages.length} 张）</td></tr>`+uploadedImages.map((img,i)=>`<tr><td>参考图 ${i+1}<br>${escapeHtml(img.name)}</td><td><img src="${img.data}" style="max-width:260px;max-height:180px;border:1px solid #dfe5ee;padding:4px"></td></tr>`).join(""):`<tr class="section"><td colspan="2">参考素材附件</td></tr><tr><td>图片</td><td>未上传参考素材</td></tr>`;
   const secondaryPreview=secondaryColors().map(c=>`<span style="background:${c}"></span> ${c}`).join("　");
   const html=`<!doctype html><html><head><meta charset="utf-8"><style>@page{margin:16mm}body{font-family:"Microsoft YaHei",Arial;color:#172033}table{border-collapse:collapse;width:100%;table-layout:fixed}.brand td{background:#155eef;color:white;padding:20px;font-size:22px;font-weight:bold}.meta td{background:#eef4ff;color:#516078;padding:9px 14px;border:1px solid #d8e2f1}.section td{background:#e8effb;color:#173b70;font-size:15px;font-weight:bold;padding:10px 12px;border:1px solid #cbd8eb}.key td{background:#fff8e8;font-weight:bold}.key td:first-child{color:#9a6100}td{padding:9px 12px;border:1px solid #dfe5ee;vertical-align:top;line-height:1.6}td:first-child{width:22%;background:#f8fafc;color:#607089;font-weight:bold}.colors span{display:inline-block;width:18px;height:18px}</style></head><body><table><tr class="brand"><td colspan="2">KBIT · UI 设计需求表</td></tr><tr class="meta"><td>项目</td><td>${escapeHtml(safeName())}</td></tr><tr class="meta"><td>生成日期</td><td>${new Date().toLocaleDateString("zh-CN")}</td></tr>${body}<tr class="section"><td colspan="2">色彩预览</td></tr><tr><td>主色 / 辅色</td><td class="colors"><span style="background:${val("primaryColor")}"></span> ${val("primaryColor")}　 ${secondaryPreview||"未选择辅色"}</td></tr>${attachmentHtml}</table></body></html>`;
-  download(`${safeName()}_设计需求.xls`,`\ufeff${html}`,"application/vnd.ms-excel;charset=utf-8");
+  if(arguments[0]===true)return `\ufeff${html}`;download(`${safeName()}_设计需求.xls`,`\ufeff${html}`,"application/vnd.ms-excel;charset=utf-8");
 }
-async function exportImage(){
+async function exportImage(returnBlob=false){
   generateBrief();
   const c=document.createElement("canvas"),w=1240,h=6000,p=88;c.width=w;c.height=h;const g=c.getContext("2d");
   g.fillStyle="#ffffff";g.fillRect(0,0,w,h);g.fillStyle="#1d4ed8";g.fillRect(0,0,18,h);
@@ -649,7 +650,7 @@ async function exportImage(){
   let y=326;sections.forEach(([title,items])=>{g.fillStyle="#eef3fa";g.fillRect(p,y,w-p*2,42);g.fillStyle="#173b70";g.font="700 20px sans-serif";g.fillText(title,p+16,y+27);y+=56;for(let i=0;i<items.length;i+=2){const left=items[i],right=items[i+1];const rowH=Math.max(measureCell(g,left,455),right?measureCell(g,right,455):58);drawPrintCell(g,left,p,y,455,rowH);if(right)drawPrintCell(g,right,p+520,y,455,rowH);y+=rowH+10}y+=14});
   if(uploadedImages.length){g.fillStyle="#eef3fa";g.fillRect(p,y,w-p*2,42);g.fillStyle="#173b70";g.font="700 20px sans-serif";g.fillText(`05  参考素材（${uploadedImages.length} 张）`,p+16,y+27);y+=60;const thumbs=await Promise.all(uploadedImages.map(x=>loadCanvasImage(x.data).catch(()=>null)));for(let i=0;i<thumbs.length;i++){const col=i%3,row=Math.floor(i/3),tx=p+col*350,ty=y+row*245;g.fillStyle="#f8fafc";roundRect(g,tx,ty,320,220,12);g.fill();if(thumbs[i])drawCover(g,thumbs[i],tx+8,ty+8,304,168,8);g.fillStyle="#475569";g.font="15px sans-serif";g.fillText(`参考图 ${i+1} · ${truncateText(uploadedImages[i].name,22)}`,tx+10,ty+202)}y+=Math.ceil(thumbs.length/3)*245+18}
   const finalH=Math.max(1754,Math.min(h,y+130)),out=document.createElement("canvas");out.width=w;out.height=finalH;const o=out.getContext("2d");o.fillStyle="#fff";o.fillRect(0,0,w,finalH);o.drawImage(c,0,0,w,finalH,0,0,w,finalH);o.fillStyle="#1d4ed8";o.fillRect(0,0,18,finalH);o.strokeStyle="#dbe3ef";o.beginPath();o.moveTo(p,finalH-92);o.lineTo(w-p,finalH-92);o.stroke();o.fillStyle="#64748b";o.font="15px sans-serif";o.fillText("由 KBIT UI Design Brief 自动生成 · 已包含本次上传的参考素材",p,finalH-58);o.textAlign="right";o.fillText(`${safeName()}  ·  ${document.getElementById("designType").selectedOptions[0].text}`,w-p,finalH-58);
-  const a=document.createElement("a");a.download=`${safeName()}_需求概览_完整长图.png`;a.href=out.toDataURL("image/png");a.click();
+  if(returnBlob)return await new Promise(resolve=>out.toBlob(resolve,"image/png"));const a=document.createElement("a");a.download=`${safeName()}_需求概览_完整长图.png`;a.href=out.toDataURL("image/png");a.click();
 }
 function roundRect(x,a,b,w,h,r){x.beginPath();x.roundRect(a,b,w,h,r)}
 function wrapLines(x,text,max){const lines=[];String(text).split("\n").forEach(paragraph=>{let cur="";for(const ch of paragraph){if(cur&&x.measureText(cur+ch).width>max){lines.push(cur);cur=ch}else cur+=ch}lines.push(cur||" ")});return lines}
@@ -659,13 +660,35 @@ function drawPrintCell(g,item,x,y,w,h){g.strokeStyle="#e2e8f0";g.lineWidth=1;g.s
 function loadCanvasImage(src){return new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=reject;img.src=src})}
 function drawCover(g,img,x,y,w,h,r){g.save();roundRect(g,x,y,w,h,r);g.clip();const scale=Math.max(w/img.width,h/img.height),dw=img.width*scale,dh=img.height*scale;g.drawImage(img,x+(w-dw)/2,y+(h-dh)/2,dw,dh);g.restore()}
 function truncateText(text,max){return text.length>max?text.slice(0,max-1)+"…":text}
+async function downloadPackage(button){
+  generateBrief();if(button){button.disabled=true;button.textContent="正在打包…"}
+  try{const project=safeName(),root=`${project}_设计任务包/`,markdown=document.getElementById("output").textContent,excel=exportCSV(true),png=await exportImage(true),files=[];
+    files.push({name:root+`${project}_design.md`,data:new TextEncoder().encode(markdown)});
+    files.push({name:root+`${project}_设计需求.xls`,data:new TextEncoder().encode(excel)});
+    files.push({name:root+`${project}_需求概览_完整长图.png`,data:new Uint8Array(await png.arrayBuffer())});
+    uploadedImages.forEach((img,i)=>files.push({name:root+`参考素材/参考图_${String(i+1).padStart(2,"0")}_${safeFileName(img.name)}`,data:dataUrlBytes(img.data)}));
+    const manifest={项目名称:val("projectName"),产品名称:val("productName"),设计类型:document.getElementById("designType").selectedOptions[0].text,目标尺寸:selectedSizes(),主色:val("primaryColor"),辅色:secondaryColors(),参考图片:uploadedImages.map(x=>x.name),生成时间:new Date().toISOString()};
+    files.push({name:root+"任务清单.json",data:new TextEncoder().encode(JSON.stringify(manifest,null,2))});
+    const readme=`KBIT UI Design Brief 设计任务包\n\n1. ${project}_design.md：提交给 AI 的完整设计需求。\n2. ${project}_设计需求.xls：便于查看和编辑的设计需求表。\n3. ${project}_需求概览_完整长图.png：适合预览、打印和汇报。\n4. 参考素材：本次上传的原始图片。\n5. 任务清单.json：项目、尺寸、配色和附件索引。\n\n建议：将整个文件夹一起提交给 Codex，并明确要求“基于 design.md 与参考素材生成高保真 UI，不机械复刻参考图”。`;
+    files.push({name:root+"README_使用说明.txt",data:new TextEncoder().encode(readme)});
+    const zip=buildZip(files);download(`${project}_设计任务包.zip`,zip,"application/zip");
+  }catch(error){alert("打包失败，请检查图片文件后重试。") }finally{if(button){button.disabled=false;button.textContent="一键打包下载"}}
+}
+function safeFileName(name){return String(name||"image.png").replace(/[\\/:*?"<>|]/g,"-")}
+function dataUrlBytes(data){const base64=data.split(",")[1]||"",binary=atob(base64),bytes=new Uint8Array(binary.length);for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);return bytes}
+const crcTable=(()=>{const table=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=(c&1)?0xedb88320^(c>>>1):c>>>1;table[n]=c>>>0}return table})();
+function crc32(bytes){let c=0xffffffff;for(const b of bytes)c=crcTable[(c^b)&255]^(c>>>8);return(c^0xffffffff)>>>0}
+function u16(n){return new Uint8Array([n&255,(n>>>8)&255])}function u32(n){return new Uint8Array([n&255,(n>>>8)&255,(n>>>16)&255,(n>>>24)&255])}
+function joinBytes(parts){const size=parts.reduce((n,p)=>n+p.length,0),out=new Uint8Array(size);let offset=0;for(const p of parts){out.set(p,offset);offset+=p.length}return out}
+function zipTime(){const d=new Date(),time=(d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1),date=((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate();return{time,date}}
+function buildZip(files){const local=[],central=[];let offset=0;const stamp=zipTime();for(const file of files){const name=new TextEncoder().encode(file.name),data=file.data instanceof Uint8Array?file.data:new Uint8Array(file.data),crc=crc32(data),header=joinBytes([u32(0x04034b50),u16(20),u16(0x0800),u16(0),u16(stamp.time),u16(stamp.date),u32(crc),u32(data.length),u32(data.length),u16(name.length),u16(0),name]),record=joinBytes([header,data]);local.push(record);central.push(joinBytes([u32(0x02014b50),u16(20),u16(20),u16(0x0800),u16(0),u16(stamp.time),u16(stamp.date),u32(crc),u32(data.length),u32(data.length),u16(name.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(offset),name]));offset+=record.length}const center=joinBytes(central),end=joinBytes([u32(0x06054b50),u16(0),u16(0),u16(files.length),u16(files.length),u32(center.length),u32(offset),u16(0)]);return joinBytes([...local,center,end])}
 function formData(){const data={};document.querySelectorAll("input:not([type=file]),select,textarea").forEach(e=>{if(e.type==="checkbox")data[e.id||e.value]=e.checked;else if(e.id)data[e.id]=e.value});return data}
 function saveDraft(){try{localStorage.setItem("uiBriefDraft",JSON.stringify({fields:formData(),images:uploadedImages,customSizes,selectedSizeValues:selectedSizes()}))}catch(e){}}
 function restoreDraft(){try{const d=JSON.parse(localStorage.getItem("uiBriefDraft"));if(!d)return;customSizes=d.customSizes||[];sizeSelections=new Set(d.selectedSizeValues||[]);Object.entries(d.fields||{}).forEach(([k,v])=>{const e=document.getElementById(k)||[...document.querySelectorAll('input[type=checkbox]')].find(x=>x.value===k);if(e){if(e.type==="checkbox")e.checked=v;else e.value=v}});renderDynamicFields();Object.entries(d.fields||{}).forEach(([k,v])=>{const e=document.getElementById(k)||[...document.querySelectorAll('input[type=checkbox]')].find(x=>x.value===k);if(e){if(e.type==="checkbox")e.checked=v;else e.value=v}});uploadedImages=d.images||[];renderPreviews();toggleOtherStyle();renderColorPalettes();syncCustomSelects();updateSizeSummary()}catch(e){}}
 function clearForm(){if(!confirm("确定清空所有内容和本机草稿吗？"))return;document.getElementById("uiForm").reset();uploadedImages=[];customSizes=[];sizeSelections=new Set();localStorage.removeItem("uiBriefDraft");renderDynamicFields();renderPreviews();renderColorPalettes();syncCustomSelects();updateFormUI();document.getElementById("output").textContent="填写表单后点击“生成 AI 设计任务包”。"}
 function fillDemo(){
   if(!confirm("将使用模拟数据覆盖当前已填写内容，是否继续？"))return;
-  document.getElementById("uiForm").reset();uploadedImages=[];renderPreviews();
+  document.getElementById("uiForm").reset();uploadedImages=[];customSizes=[];sizeSelections=new Set();renderPreviews();
   const demo={projectName:"拍在云南影视服务平台 H5 优化",productName:"拍在云南@昆明影视服务数据资源中心",slogan:"全面了解云南，快捷选取服务，轻松开启拍摄",summary:"面向来滇影视剧组、制片机构与影视从业者的一站式移动端服务平台，集中提供外景地、影视企业、案例、演职人员、配套服务、政策资讯、业务申请与预约管理。",industry:"媒体",designType:"h5",mood:"专业、开放、具有云南地域辨识度与影视行业质感",primaryColor:"#007aff",secondaryColor:"#ffbe00,#e64340,#f5f1e8",color:"主色用于导航、按钮与链接；黄色用于重点推荐，红色用于重要状态，米白用于内容背景",layout:"移动端信息门户结构，首页视觉引导与快捷服务入口前置，列表卡片清晰，底部导航固定",graphic:"简洁线性功能图标，结合云南外景摄影与影视制作场景图片",focus:"外景地资源、影视服务分类、政策资讯、在线申请与预约入口",references:"现有项目：https://yun.rmt.kmzscc.com/h5/film-service/index.html#/",referenceFocus:"保留现有业务栏目和服务路径，优化首页层级、列表信息密度、详情页阅读体验与统一状态反馈",avoidReference:"不照搬旧页面间距与组件样式，不增加与影视服务无关的文旅电商元素",constraints:"保留首页、服务、政策、我的四个底部导航及现有业务功能；适配微信内置浏览器",responsive:"移动端 375×812 为主要设计基准，兼容 320～430px 宽度与全面屏安全区",assets:"现有品牌名称、栏目数据、外景地与影视案例图片、政策内容",forbidden:"避免娱乐化追星风格、过度炫技动效、低对比度文字和密集小字号",outputNotes:"优先生成首页、服务聚合页、外景地列表与详情、政策列表、业务申请、预约记录、我的页面；覆盖加载、空、错误、未登录、提交成功状态。"};
   Object.entries(demo).forEach(([id,value])=>{const e=document.getElementById(id);if(e)e.value=value});renderDynamicFields();
   const demoDynamic=["移动端影视服务数据资源平台","首页、服务、政策、我的；首页为默认入口","影视企业、外景地、影视案例、演职人员、服务机构、资讯文章","进入首页 → 搜索或选择服务 → 查看列表与详情 → 登录 → 提交申请或预约 → 在我的页面查询进度","手机号 / 验证码登录；我的申请、我的收藏、我的预约、个人资料","微信分享、地图选点与位置导航、电话联系、外部网页","加载、内容为空、网络错误、未登录、申请提交成功、预约成功或取消"];let demoIndex=0;configs.h5.forEach((f,i)=>{if(f[1]!=="sizepicker")document.getElementById("dynamic_"+i).value=demoDynamic[demoIndex++]});
