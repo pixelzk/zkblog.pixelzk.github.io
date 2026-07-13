@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>UI设计需求确认单</title>
+<style>
+  :root{
+    --bg:#f3f6fb;
+    --card:#fff;
+    --text:#1f2328;
+    --muted:#6b7280;
+    --line:#e5e7eb;
+    --accent:#155eef;
+    --accent-soft:#eff6ff;
+    --radius:18px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:radial-gradient(circle at 15% 0%,#eaf1ff 0,transparent 28%),var(--bg);
+    color:var(--text);
+  }
+  .wrap{max-width:1040px;margin:38px auto;padding:0 24px 80px}
+  .head{margin-bottom:22px;display:flex;justify-content:space-between;align-items:flex-end;gap:20px}
+  .eyebrow{display:inline-flex;align-items:center;gap:7px;color:var(--accent);font-size:12px;font-weight:700;letter-spacing:.08em;margin-bottom:10px}.eyebrow:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 5px rgba(21,94,239,.1)}
+  h1{font-size:32px;letter-spacing:-.02em;margin:0 0 8px}
+  .sub{color:var(--muted);font-size:14px}
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:26px;
+    margin-bottom:18px;
+    box-shadow:0 5px 22px rgba(15,23,42,.045);
+    transition:border-color .2s,box-shadow .2s,transform .2s;
+  }
+  form .card:focus-within{border-color:#b9cdfb;box-shadow:0 10px 30px rgba(21,94,239,.08);transform:translateY(-1px)}
+  .section-title{font-size:17px;font-weight:750;margin:0 0 20px;display:flex;align-items:center;gap:10px}.section-title:after{content:"";height:1px;background:var(--line);flex:1}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .field{display:flex;flex-direction:column;gap:8px}
+  .field.full{grid-column:1/-1}
+  label{font-size:13px;font-weight:600}
+  input,select,textarea{
+    width:100%;
+    border:1px solid var(--line);
+    border-radius:11px;
+    padding:12px 13px;
+    font:inherit;
+    background:#fff;
+    outline:none;
+  }
+  input[type="color"]{height:40px;padding:3px;cursor:pointer;background:#fff}
+  .color-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+  .color-fields .field{gap:6px}.color-fields label{font-size:12px;color:var(--muted)}
+  .palette{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.swatch{width:32px;height:32px;padding:0;border:2px solid #fff;border-radius:8px;box-shadow:0 0 0 1px var(--line);position:relative}.swatch.selected{box-shadow:0 0 0 2px var(--accent)}.swatch.selected:after{content:"✓";position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-weight:800;text-shadow:0 1px 3px #000}.custom-color-btn{height:32px;padding:0 10px;border:1px solid var(--line);background:#fff;font-size:12px}.custom-picker{width:52px!important;height:32px!important}.color-note{grid-column:1/-1}
+  input:hover,select:hover,textarea:hover{border-color:#c4ccda}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(21,94,239,.1)}
+  input.has-value,select.has-value,textarea.has-value{background-color:#fbfdff;border-color:#cbd8f5}
+  select{appearance:none;-webkit-appearance:none;padding-right:42px;cursor:pointer;background-color:#fff;background-image:linear-gradient(45deg,transparent 50%,#64748b 50%),linear-gradient(135deg,#64748b 50%,transparent 50%),linear-gradient(to right,#e8edf5,#e8edf5);background-position:calc(100% - 19px) 50%,calc(100% - 14px) 50%,calc(100% - 40px) 50%;background-size:5px 5px,5px 5px,1px 22px;background-repeat:no-repeat;transition:border-color .18s,box-shadow .18s,background-color .18s}
+  select:hover{background-color:#fbfdff;background-image:linear-gradient(45deg,transparent 50%,#155eef 50%),linear-gradient(135deg,#155eef 50%,transparent 50%),linear-gradient(to right,#d8e3f6,#d8e3f6)}
+  select:focus{background-color:#fff;background-image:linear-gradient(45deg,transparent 50%,#155eef 50%),linear-gradient(135deg,#155eef 50%,transparent 50%),linear-gradient(to right,#c7d7f5,#c7d7f5)}
+  select option{color:#1f2937;background:#fff;padding:10px}
+  select.customized{position:absolute!important;opacity:0!important;pointer-events:none!important;width:1px!important;height:1px!important}
+  .select-ui{position:relative}.select-trigger{width:100%;min-height:46px;padding:11px 44px 11px 13px;text-align:left;background:#fff;color:var(--text);border:1px solid var(--line);border-radius:11px;box-shadow:none;position:relative}.select-trigger:hover{border-color:#9fb8ed;background:#fbfdff}.select-trigger:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 3px rgba(21,94,239,.1)}.select-trigger:after{content:"";position:absolute;right:17px;top:50%;width:7px;height:7px;border-right:2px solid #64748b;border-bottom:2px solid #64748b;transform:translateY(-70%) rotate(45deg);transition:.2s}.select-ui.open .select-trigger:after{transform:translateY(-25%) rotate(225deg);border-color:var(--accent)}
+  .select-menu{position:absolute;left:0;right:0;top:calc(100% + 7px);z-index:30;display:none;padding:6px;background:rgba(255,255,255,.98);backdrop-filter:blur(14px);border:1px solid #d9e2ef;border-radius:12px;box-shadow:0 16px 38px rgba(15,23,42,.15);max-height:260px;overflow:auto}.select-ui.open .select-menu{display:block;animation:selectIn .16s ease-out}.select-option{width:100%;padding:10px 11px;border-radius:8px;background:transparent;color:#334155;text-align:left;box-shadow:none}.select-option:hover,.select-option.focused{background:#f1f5ff;color:#155eef;transform:none}.select-option.selected{background:#eaf1ff;color:#155eef;font-weight:700}.select-option.selected:after{content:"✓";float:right;font-weight:800}@keyframes selectIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+  textarea{min-height:92px;resize:vertical}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip input{display:none}
+  .chip span{
+    display:inline-block;
+    padding:8px 12px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    font-size:13px;
+    cursor:pointer;transition:.18s;
+    user-select:none;
+  }
+  .chip input:checked + span{
+    border-color:var(--accent);
+    color:var(--accent);
+    background:var(--accent-soft);
+  }
+  .chip span:hover{border-color:#9fb8ed;transform:translateY(-1px)}
+  .hint{font-size:12px;color:var(--muted)}
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+  button{
+    border:0;
+    border-radius:10px;
+    padding:11px 16px;
+    font:inherit;
+    cursor:pointer;transition:transform .16s,box-shadow .16s,background .16s;
+  }
+  button:hover{transform:translateY(-1px)}button:active{transform:translateY(0)}
+  .primary{background:linear-gradient(135deg,#155eef,#2f75ff);color:#fff;box-shadow:0 6px 14px rgba(21,94,239,.2)}
+  .secondary{background:#eef0f3;color:#222}
+  .ghost{background:#fff;border:1px solid var(--line)}
+  .output{
+    white-space:pre-wrap;
+    background:#0f172a;
+    color:#e2e8f0;
+    border-radius:12px;
+    padding:16px;
+    min-height:180px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:13px;
+    overflow:auto;
+  }
+  .hidden{display:none}
+  .stepbar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:20px 0 12px}
+  .step{padding:12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.78);color:var(--muted);font-size:12px;text-align:center;transition:.2s}
+  .step.active{border-color:#9db8f5;background:#fff;box-shadow:0 5px 16px rgba(21,94,239,.08)}
+  .step strong{display:block;color:var(--text);font-size:13px;margin-bottom:2px}
+  .upload-zone{border:1.5px dashed #b8c2d2;border-radius:14px;padding:24px;text-align:center;background:#fafbfc;cursor:pointer;transition:.2s}
+  .upload-zone:hover,.upload-zone.drag{border-color:var(--accent);background:var(--accent-soft)}
+  .upload-zone input{display:none}.upload-zone b{display:block;margin-bottom:6px}.upload-zone span{font-size:12px;color:var(--muted)}
+  .preview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+  .preview-item{position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+  .preview-item img{width:100%;height:128px;object-fit:cover;display:block}
+  .preview-meta{padding:9px;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .preview-item button{position:absolute;right:6px;top:6px;width:26px;height:26px;padding:0;border-radius:50%;background:rgba(15,23,42,.78);color:#fff}
+  .status{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:10px;background:#f8fafc;border:1px solid var(--line);font-size:13px}
+  .dot{width:8px;height:8px;border-radius:50%;background:#f59e0b}.status.ready .dot{background:#16a34a}
+  .toolbar{position:sticky;bottom:12px;z-index:5;display:flex;justify-content:space-between;gap:12px;align-items:center;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border:1px solid var(--line);box-shadow:0 10px 35px rgba(15,23,42,.12);border-radius:14px;padding:12px 14px;margin-top:16px}
+  .progress-wrap{position:sticky;top:0;z-index:12;display:flex;align-items:center;gap:12px;margin:0 0 24px;padding:12px 14px;background:rgba(255,255,255,.92);backdrop-filter:blur(14px);border:1px solid rgba(213,221,234,.9);border-radius:12px;box-shadow:0 6px 20px rgba(15,23,42,.07)}.progress-track{height:7px;background:#dfe6f2;border-radius:99px;overflow:hidden;flex:1}.progress-bar{height:100%;width:0;background:linear-gradient(90deg,#155eef,#49a0ff);border-radius:99px;transition:width .35s}.progress-text{font-size:12px;color:var(--muted);font-weight:600;white-space:nowrap}
+  .size-picker{margin-top:24px;padding-top:22px;border-top:1px solid var(--line)}.size-launch{width:100%;display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#f8fafc;border:1px solid #dce4ef;border-radius:12px;color:#172033}.size-launch:hover{background:#f1f6ff;border-color:#a9c0ef}.size-launch-main{display:flex;align-items:center;gap:11px;text-align:left}.size-launch-icon{width:36px;height:36px;border-radius:9px;background:#dff8f4;color:#047c72;display:grid;place-items:center;font-size:18px;font-weight:800}.size-launch-text b{display:block;font-size:14px}.size-launch-text span{font-size:12px;color:var(--muted)}.size-launch-arrow{color:#155eef;font-size:18px}.size-drawer-mask{position:fixed;inset:0;z-index:50;background:rgba(15,23,42,.32);opacity:0;visibility:hidden;transition:.22s}.size-drawer-mask.open{opacity:1;visibility:visible}.size-drawer{position:absolute;right:0;top:0;height:100%;width:min(420px,92vw);background:#fff;box-shadow:-18px 0 46px rgba(15,23,42,.18);transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column}.size-drawer-mask.open .size-drawer{transform:none}.size-drawer-head{padding:20px 22px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}.size-drawer-head h3{margin:0;font-size:19px}.size-drawer-close{width:36px;height:36px;padding:0;border-radius:9px;background:#f1f5f9}.size-drawer-body{padding:16px 22px 28px;overflow:auto;flex:1}.size-category{position:sticky;top:-16px;z-index:5;background:#fff;padding:0 0 12px}.size-group{margin-top:8px}.size-group-title{font-size:12px;color:#344054;font-weight:800;margin-bottom:10px}.size-options{display:grid;grid-template-columns:1fr;gap:7px}.size-option input{display:none}.size-option span{display:flex;align-items:center;gap:9px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:12px;cursor:pointer;transition:.18s;min-height:42px}.size-option span:before{content:"";width:15px;height:15px;flex:0 0 15px;border:1.5px solid #98a2b3;border-radius:4px}.size-option input:checked+span{color:#087f72;border-color:#51c9bb;background:#e9fbf8;font-weight:700}.size-option input:checked+span:before{background:#12b8a6;border-color:#12b8a6;box-shadow:inset 0 0 0 3px #e9fbf8}.custom-size{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}.custom-size input:nth-child(3),.custom-size button{grid-column:1/-1}.custom-size input{min-width:0}.size-drawer-foot{padding:14px 22px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;background:#fff}.size-drawer-foot button{min-width:110px}
+  .size-field{grid-column:2;grid-row:1}
+  .size-option>span{position:relative;min-height:58px;padding:8px;border-color:transparent}.size-option>span:before{display:none}.size-option>span:hover{background:#f7f9fc;border-color:#e0e7f0}.size-option input:checked+span:after{content:"✓";position:absolute;right:7px;top:7px;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:#12b8a6;color:#fff;font-size:11px;font-weight:900}.device-icon{position:relative;flex:0 0 40px;width:40px;height:40px;border-radius:8px;background:#16c7b5}.device-icon:before{content:"";position:absolute;left:10px;top:5px;width:18px;height:28px;border:2px solid #083b36;border-radius:4px;background:#d8fff8}.device-icon.desktop:before,.device-icon.tv:before{left:5px;top:7px;width:27px;height:20px;border-radius:3px}.device-icon.desktop:after,.device-icon.tv:after{content:"";position:absolute;left:17px;top:29px;width:8px;height:4px;border-bottom:2px solid #083b36}.device-icon.tablet:before{left:7px;top:4px;width:24px;height:30px;border-radius:3px}.device-icon.watch,.device-icon.tv{background:#ffbd00}.device-icon.watch:before{left:12px;top:9px;width:14px;height:20px;border-radius:5px}.device-icon.watch:after{content:"";position:absolute;left:15px;top:3px;width:10px;height:34px;border-top:4px solid #083b36;border-bottom:4px solid #083b36}.device-icon.print{background:#ff6b1a}.device-icon.print:before{left:9px;top:5px;width:20px;height:28px;border-radius:2px;background:#fff4ea}.device-icon.share:before{left:9px;top:9px;width:20px;height:20px;border-radius:4px}.device-icon.share:after{content:"↑";position:absolute;left:15px;top:9px;color:#083b36;font-weight:900}.device-icon.icon:before{left:9px;top:9px;width:20px;height:20px;border-radius:6px}.size-copy{display:flex!important;flex-direction:column;align-items:flex-start!important;gap:0!important;min-width:0;padding:0!important;border:0!important;background:transparent!important;min-height:0!important}.size-copy:before{display:none!important}.size-copy b{font-size:12px;color:#253043;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px}.size-copy small{font-size:11px;color:#98a2b3;margin-top:3px}
+  .toolbar .actions{justify-content:flex-end}.danger-text{color:#b42318}
+  @media (max-width:720px){
+    .grid{grid-template-columns:1fr}
+    .field.full{grid-column:auto}
+    .wrap{margin:20px auto}
+    .card{padding:18px}
+    .stepbar{grid-template-columns:1fr 1fr}.preview-grid{grid-template-columns:1fr 1fr}.toolbar{position:static;align-items:stretch;flex-direction:column}.color-fields{grid-template-columns:1fr 1fr}.color-fields .field:last-child{grid-column:1/-1}
+    .size-options{grid-template-columns:1fr}.custom-size{grid-template-columns:1fr 1fr}.custom-size input:nth-child(3),.custom-size button{grid-column:1/-1}.size-field{grid-column:auto;grid-row:auto}
+  }
+  @media print{body{background:#fff}.wrap{max-width:none;margin:0;padding:0}.actions,.toolbar,.upload-zone,.stepbar{display:none!important}.card{box-shadow:none;break-inside:avoid}.output{background:#f8fafc;color:#111;border:1px solid var(--line)}input,select,textarea{border:0;padding-left:0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div><div class="eyebrow">KBIT DESIGN WORKFLOW</div><h1>UI设计需求确认单</h1><div class="sub">KBIT AI Design Brief · 用于生成 design.md 与高保真页面</div></div>
+  </div>
+  <div class="progress-wrap"><div class="progress-track"><div id="progressBar" class="progress-bar"></div></div><span id="progressText" class="progress-text">已填写 0%</span></div>
+  <div class="stepbar">
+    <div class="step"><strong>01 基础需求</strong>项目背景与页面内容</div>
+    <div class="step"><strong>02 设计设定</strong>平台、视觉与参考图</div>
+    <div class="step"><strong>03 整理下载</strong>导出图片、表格或文档</div>
+    <div class="step"><strong>04 AI 生成</strong>design.md 与高保真稿</div>
+  </div>
+
+  <form id="uiForm">
+    <section class="card">
+      <h2 class="section-title">1. 基础信息</h2>
+      <div class="grid">
+        <div class="field">
+          <label>项目名称</label>
+          <input id="projectName" placeholder="例如：晋宁文化旅游平台">
+        </div>
+        <div class="field">
+          <label>产品名称 / 主题 / Logo 名称</label>
+          <input id="productName" placeholder="例如：乐享湖滨春城">
+        </div>
+        <div class="field full">
+          <label>小标题 / 口号 / 宣传语</label>
+          <input id="slogan" placeholder="没有可不填">
+        </div>
+        <div class="field full">
+          <label>摘要 / 一句话说明</label>
+          <textarea id="summary" placeholder="说明是什么、给谁用、解决什么问题"></textarea>
+        </div>
+        <div class="field">
+          <label>所属行业</label>
+          <select id="industry">
+            <option>政务</option><option>文旅</option><option>教育</option><option>医疗</option>
+            <option>企业服务</option><option>电商</option><option>金融</option><option>媒体</option><option>其他</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>设计类型</label>
+          <select id="designType">
+            <option value="miniapp">微信 / 支付宝小程序</option>
+            <option value="nativeapp">原生 APP（iOS / Android）</option>
+            <option value="web">Web 网站 / Web 应用</option>
+            <option value="h5">H5 / 活动页</option>
+            <option value="page">单个页面</option>
+            <option value="logo">Logo</option>
+            <option value="icon">Icon</option>
+            <option value="banner">数字 Banner / 社交配图</option>
+            <option value="print">印刷品 / 海报 / 宣传物料</option>
+            <option value="dashboard">大屏 / 数据可视化</option>
+            <option value="system">组件 / Design System</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">2. 类型信息</h2>
+      <div id="dynamicFields" class="grid"></div>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">3. 视觉方向</h2>
+      <div class="field full">
+        <label>整体风格</label>
+        <div class="chips" data-group="style">
+          <label class="chip"><input type="checkbox" value="现代简约"><span>现代简约</span></label>
+          <label class="chip"><input type="checkbox" value="现代国风"><span>现代国风</span></label>
+          <label class="chip"><input type="checkbox" value="科技"><span>科技</span></label>
+          <label class="chip"><input type="checkbox" value="商务"><span>商务</span></label>
+          <label class="chip"><input type="checkbox" value="年轻化"><span>年轻化</span></label>
+          <label class="chip"><input type="checkbox" value="高级感"><span>高级感</span></label>
+          <label class="chip"><input type="checkbox" value="极简"><span>极简</span></label>
+          <label class="chip"><input type="checkbox" value="插画"><span>插画</span></label>
+          <label class="chip"><input type="checkbox" value="3D"><span>3D</span></label>
+          <label class="chip"><input type="checkbox" value="玻璃拟态"><span>玻璃拟态</span></label>
+          <label class="chip"><input id="styleOtherToggle" type="checkbox" value="其他"><span>其他</span></label>
+        </div>
+        <div id="styleOtherField" class="field hidden" style="margin-top:12px">
+          <label>其他设计风格</label>
+          <input id="styleOther" placeholder="例如：新粗野主义、Y2K、自然有机、复古未来主义">
+        </div>
+      </div>
+      <div class="grid" style="margin-top:16px">
+        <div class="field">
+          <label>页面氛围 / 第一感觉</label>
+          <input id="mood" placeholder="例如：清新、专业、沉浸、品质感">
+        </div>
+        <div class="field full">
+          <label>色彩倾向</label>
+          <div class="color-fields">
+            <div class="field"><label>主色</label><input id="primaryColor" type="hidden" value="#1478ff"><div class="palette" data-color-target="primaryColor"></div></div>
+            <div class="field"><label>辅色（可多选）</label><input id="secondaryColor" type="hidden" value="#ff9f43"><div class="palette" data-color-target="secondaryColor"></div></div>
+            <div class="field color-note"><label>配色说明 / 自定义填写</label><input id="color" placeholder="例如：主色用于按钮，辅色用于强调；搭配米白背景"></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>版式偏好</label>
+          <input id="layout" placeholder="例如：大留白、卡片式、沉浸式">
+        </div>
+        <div class="field">
+          <label>图形 / 图标 / 插画风格</label>
+          <input id="graphic" placeholder="例如：线性图标、扁平插画">
+        </div>
+        <div class="field full">
+          <label>希望重点突出</label>
+          <input id="focus" placeholder="例如：品牌、活动入口、地图、数据、CTA按钮">
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">4. 参考资料</h2>
+      <div class="grid">
+        <div class="field full">
+          <label>竞品 / 内部案例 / 截图 / AI 链接</label>
+          <textarea id="references" placeholder="每行填写一个链接或附件说明"></textarea>
+        </div>
+        <div class="field">
+          <label>主要参考内容</label>
+          <input id="referenceFocus" placeholder="布局、配色、风格、交互、图标等">
+        </div>
+        <div class="field">
+          <label>不希望参考的部分</label>
+          <input id="avoidReference" placeholder="避免机械复刻或不合适内容">
+        </div>
+      </div>
+      <div class="field full" style="margin-top:18px">
+        <label>上传设计参考图 / 草图 / 竞品截图</label>
+        <label class="upload-zone" id="uploadZone">
+          <input id="imageUpload" type="file" accept="image/png,image/jpeg,image/webp" multiple>
+          <b>点击或拖拽图片到这里</b>
+          <span>支持 PNG、JPG、WebP；建议单张不超过 8MB，图片仅保存在当前浏览器</span>
+        </label>
+        <div id="previewGrid" class="preview-grid"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">5. 设计约束</h2>
+      <div class="grid">
+        <div class="field">
+          <label>必须遵循</label>
+          <input id="constraints" placeholder="品牌规范、政府规范、组件库等">
+        </div>
+        <div class="field">
+          <label>适配要求</label>
+          <input id="responsive" placeholder="375 / 390 / 750 / 1440 / 响应式">
+        </div>
+        <div class="field">
+          <label>现有素材 / 规范</label>
+          <input id="assets" placeholder="Logo、VI、字体、组件、图片等">
+        </div>
+        <div class="field">
+          <label>明确禁止</label>
+          <input id="forbidden" placeholder="禁用颜色、风格、元素、交互等">
+        </div>
+        <div class="field">
+          <label>内容 / 数据准备情况</label>
+          <select id="contentStatus"><option>已有完整真实内容</option><option>已有部分内容</option><option>需要使用示例内容</option><option>尚未确认</option></select>
+        </div>
+        <div class="field">
+          <label>无障碍 / 合规要求</label>
+          <input id="accessibility" placeholder="例如：大字号、色弱友好、WCAG、隐私合规；没有可不填">
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">6. 需要AI输出</h2>
+      <div class="chips" data-group="outputs">
+        <label class="chip"><input type="checkbox" value="design.md" checked><span>design.md</span></label>
+        <label class="chip"><input type="checkbox" value="项目需求理解" checked><span>项目需求理解</span></label>
+        <label class="chip"><input type="checkbox" value="信息架构 IA"><span>信息架构 IA</span></label>
+        <label class="chip"><input type="checkbox" value="页面清单"><span>页面清单</span></label>
+        <label class="chip"><input type="checkbox" value="用户流程"><span>用户流程</span></label>
+        <label class="chip"><input type="checkbox" value="Wireframe"><span>Wireframe</span></label>
+        <label class="chip"><input type="checkbox" value="竞品分析"><span>竞品分析</span></label>
+        <label class="chip"><input type="checkbox" value="Moodboard"><span>Moodboard</span></label>
+        <label class="chip"><input type="checkbox" value="Design Token"><span>Design Token</span></label>
+        <label class="chip"><input type="checkbox" value="组件清单"><span>组件清单</span></label>
+        <label class="chip"><input type="checkbox" value="高保真效果图Prompt" checked><span>高保真效果图Prompt</span></label>
+        <label class="chip"><input type="checkbox" value="前端实现建议"><span>前端实现建议</span></label>
+        <label class="chip"><input type="checkbox" value="验收要点"><span>验收要点</span></label>
+      </div>
+      <div class="field full" style="margin-top:16px">
+        <label>补充要求</label>
+        <textarea id="outputNotes" placeholder="例如：design.md 中需包含移动端首页的完整模块说明与高保真生成提示词"></textarea>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="status" id="formStatus"><span class="dot"></span><span>填写项目名称、摘要和核心功能后即可生成</span></div>
+    </section>
+  </form>
+
+  <section class="card">
+    <h2 class="section-title">生成结果</h2>
+    <div id="output" class="output">填写表单后点击“生成 AI 设计任务包”。</div>
+  </section>
+  <div class="toolbar">
+    <span class="hint">自动保存在本机浏览器 · 不会上传服务器</span>
+    <div class="actions">
+      <button type="button" class="ghost" onclick="fillDemo()">模拟填写</button>
+      <button type="button" class="ghost" onclick="exportCSV()">导出设计表格 Excel</button>
+      <button type="button" class="ghost" onclick="exportImage()">导出需求概览 PNG</button>
+      <button type="button" class="secondary" onclick="downloadMarkdown()">下载 design.md</button>
+      <button type="button" class="primary" onclick="generateBrief()">生成 AI 设计任务包</button>
+      <button type="button" class="ghost danger-text" onclick="clearForm()">清空</button>
+    </div>
+  </div>
+</div>
+
+<div id="sizeDrawerMask" class="size-drawer-mask" onclick="closeSizeDrawer(event)"><aside class="size-drawer" role="dialog" aria-modal="true" aria-labelledby="sizeDrawerTitle" onclick="event.stopPropagation()"><div class="size-drawer-head"><div><h3 id="sizeDrawerTitle">选择目标尺寸</h3><div class="hint" style="margin-top:4px">全部分类已展开，可同时选择多个尺寸</div></div><button type="button" class="size-drawer-close" aria-label="关闭" onclick="closeSizeDrawer()">×</button></div><div class="size-drawer-body"><div id="sizeGroups"></div><div class="size-group"><div class="size-group-title">自定义尺寸</div><div class="custom-size"><input id="customWidth" type="number" min="1" placeholder="宽度 px"><input id="customHeight" type="number" min="1" placeholder="高度 px"><input id="customSizeName" placeholder="自定义名称，如：展厅 LED"><button type="button" class="secondary" onclick="addCustomSize()">添加尺寸</button></div><div id="customSizeList" class="size-options" style="margin-top:10px"></div></div></div><div class="size-drawer-foot"><span id="drawerSizeCount" class="hint">已选择 0 个</span><button type="button" class="primary" onclick="closeSizeDrawer()">完成选择</button></div></aside></div>
+
+<script>
+const sizeCatalog={
+  miniapp:{"小程序基准":["微信标准 750×1334","微信全面屏 750×1624","支付宝 750×1334","抖音 750×1624"],"常用手机":["iPhone 13/14 390×844","iPhone 14 Pro 393×852","iPhone 15 Pro Max 430×932","iPhone 16 Pro 402×874","Android 标准 360×800","Android 大屏 412×915"]},
+  nativeapp:{"iPhone":["iPhone SE 375×667","iPhone 13 mini 375×812","iPhone 13/14 390×844","iPhone 14 Pro 393×852","iPhone 14 Pro Max 430×932","iPhone 15/15 Pro 393×852","iPhone 15 Pro Max 430×932","iPhone 16 393×852","iPhone 16 Pro 402×874","iPhone 16 Pro Max 440×956"],"Android / Pixel":["Android 标准 360×800","Android 中屏 393×873","Android 大屏 412×915","Pixel 7 360×800","Pixel 7 Pro 480×1040","Pixel 8 Pro 448×997","Pixel 9 Pro 427×952","Pixel Fold 613×736"],"Samsung / 折叠屏":["Galaxy S22/S23/S24 360×780","Galaxy Ultra 480×1040","Galaxy Z Flip 360×880","Galaxy Z Fold 604×725","OnePlus 480×1072","OnePlus Open 756×813"],"iPad / 平板":["iPad mini 744×1133","iPad 10.2 810×1080","iPad Air 820×1180","iPad Air 13 1024×1366","iPad Pro 11 834×1210","iPad Pro 13 1032×1376","Android Tablet 1280×800"],"Watch / TV":["Apple Watch 40mm 162×197","Apple Watch 44mm 184×224","Apple Watch 46mm 208×248","Apple Watch Ultra 205×251","Apple TV 1920×1080","Apple TV 4K 3840×2160"]},
+  web:{"桌面端":["1024×1080 Extra Small","1280×1080 Small","1366×768 Laptop","1440×900 MacBook","1440×1080 Medium","1512×982 MacBook Pro 14","1728×1117 MacBook Pro 16","1920×1080 Full HD","2560×1440 2K","3840×2160 4K"],"移动端":["320×640 Extra Small","360×800 Small","375×812 iPhone mini","390×844 Medium","393×873 Large","430×932 Extra Large"],"平板":["768×1024 Small","820×1024 Medium","834×1194 iPad Pro 11","1024×1024 Large","1024×1366 iPad Pro 13"],"分享图":["OpenGraph 1200×630","X 方图 600×600","X 宽图 1200×600","公众号封面 900×383","公众号次图 200×200"]},
+  h5:{"移动端 H5":["320×640 Extra Small","360×800 Android","375×667 iPhone SE","375×812 iPhone mini","390×844 iPhone 13/14","393×852 iPhone Pro","402×874 iPhone 16 Pro","430×932 Pro Max"],"分享与落地页":["750×1334 设计稿","750×1624 全面屏设计稿","1080×1920 竖屏海报","1200×630 OpenGraph"]},
+  page:{"Web 页面":["1280×1080","1366×768","1440×900","1440×1080","1920×1080","2560×1440"],"移动页面":["320×640","360×800","375×812","390×844","393×873","430×932"],"平板页面":["768×1024","820×1180","834×1194","1024×1366"]},
+  logo:{"数字端 Logo":["16×16 Favicon","32×32 Favicon","48×48","64×64","128×128","256×256","512×512","1024×1024 App Icon"],"社交头像":["200×200","400×400","800×800","1080×1080"],"横版品牌":["1200×300","1600×400","2400×600"]},
+  icon:{"界面图标":["12×12","16×16","20×20","24×24","28×28","32×32","36×36","40×40","48×48","64×64"],"应用图标":["128×128","256×256","512×512","1024×1024"],"启动与商店":["180×180 Apple Touch","512×512 Android","1024×1024 App Store"]},
+  banner:{"网页 Banner":["1920×480","1920×600","1440×420","1200×400","1024×300","750×320"],"社交媒体":["1080×1080 方图","1080×1350 竖图","1080×1920 故事","1200×630 OpenGraph","900×383 公众号封面","1242×1660 小红书"],"印刷纸张":["A0 2384×3370","A1 1684×2384","A2 1191×1684","A3 842×1191","A4 595×842","A5 420×595","A6 297×420"],"名片":["中国 1063×638","欧洲 1004×650","日本 1075×650","北美 1050×600"]},
+  print:{"标准海报 / 纸张":["A0 841×1189mm","A1 594×841mm","A2 420×594mm","A3 297×420mm","A4 210×297mm","A5 148×210mm","A6 105×148mm","B1 707×1000mm","B2 500×707mm","B3 353×500mm","B4 250×353mm","B5 176×250mm"],"宣传册 / 折页":["A4 单页 210×297mm","A4 对折 420×297mm","A4 三折 630×297mm","A5 骑马订 148×210mm","方形册 210×210mm","长条折页 210×95mm"],"户外宣传物料":["易拉宝 80×200cm","易拉宝 85×200cm","X 展架 60×160cm","X 展架 80×180cm","门型展架 80×180cm","横幅 300×70cm","海报架 60×90cm"],"卡片 / 名片":["中国名片 90×54mm","欧洲名片 85×55mm","方形卡片 90×90mm","邀请函 A5 148×210mm","明信片 100×148mm"],"包装与标签":["方形标签 50×50mm","圆形标签 50×50mm","瓶贴 90×120mm","手提袋 320×260mm","文件袋 324×229mm"]},
+  dashboard:{"标准大屏":["1920×1080 Full HD","2560×1440 2K","3840×2160 4K","7680×4320 8K"],"超宽 / 拼接屏":["2560×1080 21:9","3440×1440 21:9","3840×1080 双屏","5760×1080 三联屏","7680×2160 双 4K"],"竖屏":["1080×1920","1440×2560","2160×3840"],"会议与显示器":["1440×900 Mac","1512×982 MacBook Pro","2560×1440 Studio Display","3008×1692 Pro Display XDR"]},
+  system:{"Web 断点":["320 Mobile XS","360 Mobile S","390 Mobile M","430 Mobile L","768 Tablet S","820 Tablet M","1024 Tablet L","1280 Desktop S","1440 Desktop M","1920 Desktop L","2560 Desktop XL"],"组件基准":["8pt Grid","12 Column 1440","24×24 Icon","40px Control","48px Touch Target"]}
+};
+let customSizes=[],sizeSelections=new Set();
+const configs = {
+  miniapp: [
+    ["目标小程序平台","input","微信 / 支付宝 / 抖音 / 其他"],
+    ["目标设备与基准尺寸","sizepicker",""],
+    ["页面清单与层级","textarea","例如：首页、分类、详情、订单、我的"],
+    ["核心功能与用户路径","textarea","授权登录 → 浏览 → 提交 / 支付 → 结果"],
+    ["TabBar 结构","textarea","Tab 数量、名称、默认与选中状态"],
+    ["平台原生能力","textarea","登录、支付、定位、相机、分享、订阅消息等"],
+    ["关键页面状态","textarea","未授权、加载、空、错误、网络异常、支付结果"]
+  ],
+  nativeapp: [
+    ["目标系统","input","iOS / Android / 双端"],
+    ["目标设备与基准尺寸","sizepicker",""],
+    ["页面清单与导航结构","textarea","底部导航、顶部导航、层级与返回逻辑"],
+    ["核心功能与用户路径","textarea","用户完成主要任务的完整路径"],
+    ["系统能力与权限","textarea","相机、定位、通知、相册、生物识别等"],
+    ["平台规范偏好","input","遵循 iOS HIG / Material Design / 品牌自定义"],
+    ["关键页面状态","textarea","首次启动、权限拒绝、离线、加载、空、错误"]
+  ],
+  web: [
+    ["网站类型","input","官网 / 管理后台 / Web 应用 / 门户 / 电商"],
+    ["目标设备与响应式尺寸","sizepicker",""],
+    ["页面清单与信息架构","textarea","一级导航、二级栏目、核心页面"],
+    ["核心功能与任务流","textarea","用户在 Web 端完成的主要任务"],
+    ["导航与布局方式","input","顶部导航 / 侧边栏 / 通栏 / 固定宽度"],
+    ["浏览器兼容范围","input","Chrome / Edge / Safari；是否兼容旧版本"],
+    ["交互与页面状态","textarea","Hover、Focus、Loading、Empty、Error、权限状态"]
+  ],
+  h5: [
+    ["H5 类型与使用场景","input","服务平台 / 活动专题 / 内容展示 / 表单工具"],
+    ["目标设备与基准尺寸","sizepicker",""],
+    ["页面清单与底部导航","textarea","例如：首页、服务、政策、我的"],
+    ["核心栏目与内容分类","textarea","列出服务入口、内容分类及详情页面"],
+    ["核心功能与用户路径","textarea","进入 → 浏览 / 搜索 → 查看详情 → 申请 / 预约"],
+    ["登录与个人中心","textarea","登录方式、申请记录、收藏、预约等"],
+    ["分享与外部能力","textarea","微信分享、定位、地图、电话、文件下载等"],
+    ["关键页面状态","textarea","加载、空、错误、未登录、提交成功、预约结果"]
+  ],
+  page: [
+    ["页面名称","input","例如：首页 / 详情页"],
+    ["目标设备与页面尺寸","sizepicker",""],
+    ["页面目标","textarea","该页面要解决什么问题"],
+    ["页面模块","textarea","从上到下列出模块"],
+    ["核心交互","textarea","点击、筛选、切换、弹窗等"],
+    ["页面状态","textarea","默认、加载、空、错误、禁用等"]
+  ],
+  logo: [
+    ["Logo名称","input",""],
+    ["目标输出尺寸","sizepicker",""],
+    ["品牌定位","textarea","品牌是什么、面向谁"],
+    ["Logo寓意","textarea","希望表达的文化、象征或概念"],
+    ["中英文名称","input",""],
+    ["主要使用场景","textarea","App图标、官网、印刷物、活动物料等"]
+  ],
+  icon: [
+    ["图标名称 / 功能含义","textarea","可一行一个"],
+    ["目标输出尺寸","sizepicker",""],
+    ["图标数量","input",""],
+    ["使用位置","input","导航、按钮、分类入口等"],
+    ["状态","input","默认、选中、禁用、悬停"]
+  ],
+  banner: [
+    ["主题","input",""],
+    ["尺寸 / 比例","sizepicker",""],
+    ["主标题 / 副标题","textarea",""],
+    ["按钮文案","input",""],
+    ["需要包含的素材","textarea","人物、产品、建筑、地图等"],
+    ["投放位置","input","首页首屏、活动页、广告位等"]
+  ],
+  print: [
+    ["印刷品类型","input","海报 / 折页 / 宣传册 / 易拉宝 / 名片 / 邀请函 / 包装"],
+    ["成品尺寸与物料","sizepicker",""],
+    ["主标题 / 副标题 / 正文","textarea","按视觉层级填写全部印刷文案"],
+    ["使用场景与观看距离","textarea","室内近距离、户外远距离、展会、门店、邮寄等"],
+    ["印刷要求","textarea","CMYK、300dpi、出血 3mm、安全边距、黑色套印等"],
+    ["纸张与工艺","textarea","铜版纸、特种纸、覆膜、烫金、UV、压纹、模切等"],
+    ["必须包含的素材","textarea","Logo、二维码、联系方式、主视觉、版权信息等"],
+    ["交付格式","input","印刷 PDF / TIFF / 可编辑源文件 / JPG 预览图"],
+    ["明确禁止与注意事项","textarea","禁用颜色、二维码安全区、最小字号、版权限制等"]
+  ],
+  dashboard: [
+    ["大屏主题","input",""],
+    ["目标屏幕分辨率","sizepicker",""],
+    ["核心指标","textarea","需要重点展示的数据"],
+    ["图表类型","textarea","折线、柱状、地图、排行、卡片等"],
+    ["展示环境","input","会议室、指挥中心、展厅等"],
+    ["刷新 / 交互要求","textarea",""]
+  ],
+  system: [
+    ["组件范围","textarea","按钮、表单、导航、弹窗、卡片等"],
+    ["覆盖设备与响应式断点","sizepicker",""],
+    ["适用平台","input","Web / 小程序 / APP"],
+    ["现有规范","textarea","品牌色、字体、组件库、命名规则"],
+    ["需要覆盖的状态","textarea","默认、悬停、按下、禁用、加载、错误"],
+    ["技术框架","input","React / Vue / TDesign / Ant Design 等"]
+  ]
+};
+
+function renderDynamicFields(){
+  const type = document.getElementById("designType").value;
+  const box = document.getElementById("dynamicFields");
+  box.innerHTML = "";
+  configs[type].forEach((f,i)=>{
+    const wrap=document.createElement("div");
+    const fixedSizePicker=configs[type][1]?.[1]==="sizepicker";
+    wrap.className="field"+(f[1]==="textarea"&&!(fixedSizePicker&&i===0)?" full":"");
+    const label=document.createElement("label");
+    label.textContent=f[0];
+    if(f[1]==="sizepicker"){
+      wrap.className="field size-field";
+      const picker=document.createElement("div");picker.className="size-picker";picker.style.margin="0";picker.style.padding="0";picker.style.border="0";picker.innerHTML=`<button type="button" class="size-launch" onclick="openSizeDrawer()"><span class="size-launch-main"><span class="size-launch-icon">▣</span><span class="size-launch-text"><b>选择目标尺寸与设备</b><span id="sizeSelectionSummary">根据设计类型推荐，可多选</span></span></span><span class="size-launch-arrow">›</span></button>`;
+      wrap.append(label,picker);box.appendChild(wrap);return;
+    }
+    const el=document.createElement(f[1]);
+    el.id="dynamic_"+i;
+    el.placeholder=f[2]||"";
+    wrap.append(label,el);
+    box.appendChild(wrap);
+  });
+  renderSizeOptions();
+  updateFormUI();
+}
+function dynamicValue(f,i){return f[1]==="sizepicker"?(selectedSizes().join("、")||"未选择"):val("dynamic_"+i)}
+function renderSizeOptions(){const type=document.getElementById("designType").value,catalog=sizeCatalog[type]||{},box=document.getElementById("sizeGroups");box.innerHTML=Object.entries(catalog).map(([group,sizes])=>`<div class="size-group"><div class="size-group-title">${escapeHtml(group)}</div><div class="size-options">${sizes.map(size=>`<label class="size-option"><input type="checkbox" data-size value="${escapeHtml(size)}" ${sizeSelections.has(size)?"checked":""} onchange="sizeSelectionChanged(this)"><span><i class="device-icon ${sizeIconType(group,size)}"></i>${formatSizeLabel(size)}</span></label>`).join("")}</div></div>`).join("");renderCustomSizes();updateSizeSummary()}
+function selectedSizes(){return [...sizeSelections]}
+function addCustomSize(){const w=val("customWidth"),h=val("customHeight"),name=val("customSizeName")||"自定义";if(!w||!h){alert("请填写宽度和高度");return}const size=`${name} ${w}×${h}`;if(!customSizes.includes(size))customSizes.push(size);sizeSelections.add(size);document.getElementById("customWidth").value="";document.getElementById("customHeight").value="";document.getElementById("customSizeName").value="";renderSizeOptions();updateSizeSummary();saveDraft();updateFormUI()}
+function renderCustomSizes(){const box=document.getElementById("customSizeList");if(!box)return;box.innerHTML=customSizes.map((size,i)=>`<label class="size-option"><input type="checkbox" data-size value="${escapeHtml(size)}" ${sizeSelections.has(size)?"checked":""} onchange="sizeSelectionChanged(this)"><span><i class="device-icon desktop"></i>${formatSizeLabel(size)}</span></label><button type="button" class="ghost" style="padding:6px 9px" onclick="removeCustomSize(${i})">×</button>`).join("")}
+function removeCustomSize(i){sizeSelections.delete(customSizes[i]);customSizes.splice(i,1);renderSizeOptions();saveDraft();updateFormUI()}
+function formatSizeLabel(size){const match=String(size).match(/\d+\s*[×x]\s*\d+/i),dimension=match?match[0].replace(/\s/g,""):"",name=String(size).replace(match?.[0]||"","").trim()||"自定义尺寸";return `<span class="size-copy"><b>${escapeHtml(name)}</b><small>${escapeHtml(dimension)}</small></span>`}
+function sizeIconType(group,size){const text=(group+" "+size).toLowerCase();if(/watch|手表/.test(text))return"watch";if(/tv|电视/.test(text))return"tv";if(/ipad|tablet|平板/.test(text))return"tablet";if(/desktop|mac|显示器|大屏|宽屏|会议|web 页面|网页 banner/.test(text))return"desktop";if(/share|分享|opengraph|twitter|公众号|社交/.test(text))return"share";if(/a[0-6]|印刷|名片|纸张/.test(text))return"print";if(/logo|icon|图标|favicon|头像/.test(text))return"icon";return"phone"}
+function sizeSelectionChanged(input){if(input){input.checked?sizeSelections.add(input.value):sizeSelections.delete(input.value)}updateSizeSummary();saveDraft();updateFormUI()}
+function updateSizeSummary(){const sizes=selectedSizes(),summary=document.getElementById("sizeSelectionSummary"),count=document.getElementById("drawerSizeCount");if(summary)summary.textContent=sizes.length?`已选择 ${sizes.length} 个：${sizes.slice(0,2).join("、")}${sizes.length>2?"…":""}`:"根据设计类型推荐，可多选";if(count)count.textContent=`已选择 ${sizes.length} 个`}
+function openSizeDrawer(){document.getElementById("sizeDrawerMask").classList.add("open");document.body.style.overflow="hidden";updateSizeSummary()}
+function closeSizeDrawer(event){if(event&&event.target!==document.getElementById("sizeDrawerMask"))return;document.getElementById("sizeDrawerMask").classList.remove("open");document.body.style.overflow="";updateSizeSummary()}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSizeDrawer()});
+document.getElementById("designType").addEventListener("change",()=>{sizeSelections=new Set();renderDynamicFields();saveDraft()});
+renderDynamicFields();
+
+function initCustomSelects(){document.querySelectorAll("select:not(.customized)").forEach(select=>{select.classList.add("customized");const ui=document.createElement("div");ui.className="select-ui";const trigger=document.createElement("button");trigger.type="button";trigger.className="select-trigger";trigger.setAttribute("aria-haspopup","listbox");trigger.setAttribute("aria-expanded","false");const menu=document.createElement("div");menu.className="select-menu";menu.setAttribute("role","listbox");ui.append(trigger,menu);select.after(ui);trigger.addEventListener("click",e=>{e.stopPropagation();document.querySelectorAll(".select-ui.open").forEach(x=>{if(x!==ui)closeCustomSelect(x)});ui.classList.toggle("open");trigger.setAttribute("aria-expanded",ui.classList.contains("open"));renderCustomSelect(select)});trigger.addEventListener("keydown",e=>handleSelectKeys(e,select,ui));menu.addEventListener("click",e=>e.stopPropagation());renderCustomSelect(select)})}
+function renderCustomSelect(select){const ui=select.nextElementSibling;if(!ui?.classList.contains("select-ui"))return;ui.querySelector(".select-trigger").textContent=select.selectedOptions[0]?.text||"请选择";ui.querySelector(".select-menu").innerHTML=[...select.options].map((o,i)=>`<button type="button" role="option" aria-selected="${o.selected}" class="select-option ${o.selected?"selected":""}" onclick="chooseSelectOption('${select.id}',${i})">${escapeHtml(o.text)}</button>`).join("")}
+function chooseSelectOption(id,index){const select=document.getElementById(id);select.selectedIndex=index;select.dispatchEvent(new Event("change",{bubbles:true}));select.dispatchEvent(new Event("input",{bubbles:true}));renderCustomSelect(select);closeCustomSelect(select.nextElementSibling)}
+function closeCustomSelect(ui){ui?.classList.remove("open");ui?.querySelector(".select-trigger")?.setAttribute("aria-expanded","false")}
+function handleSelectKeys(e,select,ui){if(!["ArrowDown","ArrowUp","Enter","Escape"," "].includes(e.key))return;e.preventDefault();if(e.key==="Escape"){closeCustomSelect(ui);return}if(e.key==="Enter"||e.key===" "){ui.classList.toggle("open");renderCustomSelect(select);return}const next=Math.max(0,Math.min(select.options.length-1,select.selectedIndex+(e.key==="ArrowDown"?1:-1)));chooseSelectOption(select.id,next);ui.classList.add("open")}
+function syncCustomSelects(){document.querySelectorAll("select.customized").forEach(renderCustomSelect)}
+document.addEventListener("click",()=>document.querySelectorAll(".select-ui.open").forEach(closeCustomSelect));initCustomSelects();
+
+function checked(group){
+  return [...document.querySelectorAll(`[data-group="${group}"] input:checked`)].map(x=>x.value==="其他"&&group==="style"?(val("styleOther")||"其他（未填写）"):x.value).join("、");
+}
+function val(id){return document.getElementById(id)?.value.trim()||""}
+function secondaryColors(){return val("secondaryColor").split(",").filter(Boolean)}
+function colorValue(){return `主色 ${val("primaryColor")}；辅色 ${secondaryColors().join("、")||"未选择"}${val("color")?`；${val("color")}`:""}`}
+const presetColors=["#1478ff","#00a870","#7c3aed","#e64340","#ff8a00","#ffbe00","#111827","#64748b","#f5f1e8","#ffffff"];
+function renderColorPalettes(){document.querySelectorAll(".palette").forEach(box=>{const target=box.dataset.colorTarget,current=val(target).toLowerCase(),selected=current.split(",").filter(Boolean);box.innerHTML=presetColors.map(c=>`<button type="button" class="swatch ${selected.includes(c)?"selected":""}" style="background:${c}" title="${c}" aria-label="选择 ${c}" onclick="chooseColor('${target}','${c}')"></button>`).join("")+`<button type="button" class="custom-color-btn" onclick="toggleColorWheel('${target}')">自定义</button><input class="custom-picker hidden" id="${target}Wheel" type="color" value="${selected[0]||"#1478ff"}" onchange="chooseColor('${target}',this.value)">`})}
+function chooseColor(target,color){const input=document.getElementById(target);if(target==="secondaryColor"){let colors=input.value.toLowerCase().split(",").filter(Boolean);colors=colors.includes(color)?colors.filter(x=>x!==color):[...colors,color].slice(-5);input.value=colors.join(",")}else input.value=color;renderColorPalettes();saveDraft()}
+function toggleColorWheel(target){document.getElementById(target+"Wheel").classList.toggle("hidden")}
+renderColorPalettes();
+const styleOtherToggle=document.getElementById("styleOtherToggle");
+function toggleOtherStyle(){document.getElementById("styleOtherField").classList.toggle("hidden",!styleOtherToggle.checked)}
+styleOtherToggle.addEventListener("change",toggleOtherStyle);toggleOtherStyle();
+
+let uploadedImages=[];
+const upload=document.getElementById("imageUpload"), zone=document.getElementById("uploadZone");
+upload.addEventListener("change",e=>addImages(e.target.files));
+["dragenter","dragover"].forEach(n=>zone.addEventListener(n,e=>{e.preventDefault();zone.classList.add("drag")}));
+["dragleave","drop"].forEach(n=>zone.addEventListener(n,e=>{e.preventDefault();zone.classList.remove("drag")}));
+zone.addEventListener("drop",e=>addImages(e.dataTransfer.files));
+function addImages(files){
+  const all=[...files].filter(f=>f.type.startsWith("image/"));
+  const oversized=all.filter(f=>f.size>8*1024*1024);
+  if(oversized.length)alert(`以下图片超过 8MB，未添加：\n${oversized.map(f=>f.name).join("\n")}`);
+  all.filter(f=>f.size<=8*1024*1024).slice(0,9-uploadedImages.length).forEach(file=>{
+    const reader=new FileReader(); reader.onload=()=>{uploadedImages.push({name:file.name,data:reader.result});renderPreviews();saveDraft()}; reader.readAsDataURL(file);
+  }); upload.value="";
+}
+function renderPreviews(){
+  document.getElementById("previewGrid").innerHTML=uploadedImages.map((x,i)=>`<div class="preview-item"><img src="${x.data}" alt="参考图 ${i+1}"><button type="button" aria-label="删除" onclick="removeImage(${i})">×</button><div class="preview-meta">参考图 ${i+1} · ${escapeHtml(x.name)}</div></div>`).join("");
+}
+function removeImage(i){uploadedImages.splice(i,1);renderPreviews();saveDraft()}
+function escapeHtml(s){return s.replace(/[&<>\"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+
+function generateBrief(){
+  const typeText=document.getElementById("designType").selectedOptions[0].text;
+  const dynamic=configs[document.getElementById("designType").value].map((f,i)=>`- ${f[0]}：${dynamicValue(f,i)}`).join("\n");
+  const text=`# UI Design Brief
+
+## 1. 项目基础
+- 项目名称：${val("projectName")}
+- 产品名称 / 主题 / Logo名称：${val("productName")}
+- 小标题 / 口号 / 宣传语：${val("slogan")}
+- 摘要：${val("summary")}
+- 所属行业：${val("industry")}
+- 设计类型：${typeText}
+
+## 2. 类型信息
+${dynamic}
+
+## 3. 视觉方向
+- 整体风格：${checked("style")}
+- 页面氛围：${val("mood")}
+- 色彩倾向：${colorValue()}
+- 版式偏好：${val("layout")}
+- 图形 / 图标 / 插画风格：${val("graphic")}
+- 希望重点突出：${val("focus")}
+
+## 4. 参考资料
+- 资料：${val("references")}
+- 主要参考：${val("referenceFocus")}
+- 不希望参考：${val("avoidReference")}
+
+## 5. 设计约束
+- 必须遵循：${val("constraints")}
+- 适配要求：${val("responsive")}
+- 现有素材 / 规范：${val("assets")}
+- 明确禁止：${val("forbidden")}
+
+## 6. AI输出
+- 需要输出：${checked("outputs")}
+- 补充要求：${val("outputNotes")}
+
+## 7. 附件
+- 随附参考图：${uploadedImages.length} 张（提交给 AI 时请与本文件一起上传）
+
+## 8. AI 执行要求
+请基于以上信息：
+1. 先识别缺失信息并列出最少必要确认项；
+2. 生成结构完整、可直接执行的 design.md；
+3. 明确页面信息架构、模块顺序、视觉策略、Design Token、组件及状态；
+4. 严格按照“${typeText}”的平台特性、设计基准、导航模式和交互规范输出高保真画面，不套用其他平台模板；
+5. 高保真稿必须使用真实业务文案，覆盖默认、加载、空、错误等必要状态；
+6. 将参考图编号为参考图1～${uploadedImages.length || "N"}，逐张说明仅借鉴哪些特征；
+7. 不机械复刻参考案例，不虚构品牌资产与业务数据。`;
+  document.getElementById("output").textContent=text;
+  document.getElementById("formStatus").classList.add("ready");
+  document.getElementById("formStatus").lastElementChild.textContent="AI 设计任务包已生成，可下载 design.md 或连同参考图交给 Codex";
+  saveDraft();
+}
+async function copyBrief(){
+  const text=document.getElementById("output").textContent;
+  await navigator.clipboard.writeText(text);
+  alert("已复制");
+}
+
+function download(name,content,type){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([content],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
+function safeName(){return (val("projectName")||"UI设计需求").replace(/[\\/:*?\"<>|]/g,"-")}
+function downloadMarkdown(){generateBrief();download(`${safeName()}_design.md`,document.getElementById("output").textContent,"text/markdown;charset=utf-8")}
+function exportCSV(){
+  generateBrief();const type=document.getElementById("designType").value;
+  const groups=[["项目基础",[["项目名称",val("projectName")],["产品 / 主题",val("productName")],["宣传语",val("slogan")],["项目摘要",val("summary")],["所属行业",val("industry")],["设计类型",document.getElementById("designType").selectedOptions[0].text]]],["平台与内容",configs[type].map((f,i)=>[f[0],dynamicValue(f,i)])],["视觉方向",[["整体风格",checked("style")],["页面氛围",val("mood")],["主色",val("primaryColor")],["辅色",val("secondaryColor")],["配色说明",val("color")],["版式偏好",val("layout")],["图形风格",val("graphic")],["重点突出",val("focus")]]],["约束与交付",[["必须遵循",val("constraints")],["适配要求",val("responsive")],["现有素材",val("assets")],["明确禁止",val("forbidden")],["AI 输出",checked("outputs")],["参考图片",`${uploadedImages.length} 张`],["补充要求",val("outputNotes")]]]];
+  const body=groups.map(([title,items])=>`<tr class="section"><td colspan="2">${escapeHtml(title)}</td></tr>`+items.map(([k,v])=>`<tr class="${["项目名称","设计类型","重点突出","AI 输出"].includes(k)?"key":""}"><td>${escapeHtml(k)}</td><td>${escapeHtml(String(v||"—")).replace(/\n/g,"<br>")}</td></tr>`).join("")).join("");
+  const attachmentHtml=uploadedImages.length?`<tr class="section"><td colspan="2">参考素材附件（${uploadedImages.length} 张）</td></tr>`+uploadedImages.map((img,i)=>`<tr><td>参考图 ${i+1}<br>${escapeHtml(img.name)}</td><td><img src="${img.data}" style="max-width:260px;max-height:180px;border:1px solid #dfe5ee;padding:4px"></td></tr>`).join(""):`<tr class="section"><td colspan="2">参考素材附件</td></tr><tr><td>图片</td><td>未上传参考素材</td></tr>`;
+  const secondaryPreview=secondaryColors().map(c=>`<span style="background:${c}"></span> ${c}`).join("　");
+  const html=`<!doctype html><html><head><meta charset="utf-8"><style>@page{margin:16mm}body{font-family:"Microsoft YaHei",Arial;color:#172033}table{border-collapse:collapse;width:100%;table-layout:fixed}.brand td{background:#155eef;color:white;padding:20px;font-size:22px;font-weight:bold}.meta td{background:#eef4ff;color:#516078;padding:9px 14px;border:1px solid #d8e2f1}.section td{background:#e8effb;color:#173b70;font-size:15px;font-weight:bold;padding:10px 12px;border:1px solid #cbd8eb}.key td{background:#fff8e8;font-weight:bold}.key td:first-child{color:#9a6100}td{padding:9px 12px;border:1px solid #dfe5ee;vertical-align:top;line-height:1.6}td:first-child{width:22%;background:#f8fafc;color:#607089;font-weight:bold}.colors span{display:inline-block;width:18px;height:18px}</style></head><body><table><tr class="brand"><td colspan="2">KBIT · UI 设计需求表</td></tr><tr class="meta"><td>项目</td><td>${escapeHtml(safeName())}</td></tr><tr class="meta"><td>生成日期</td><td>${new Date().toLocaleDateString("zh-CN")}</td></tr>${body}<tr class="section"><td colspan="2">色彩预览</td></tr><tr><td>主色 / 辅色</td><td class="colors"><span style="background:${val("primaryColor")}"></span> ${val("primaryColor")}　 ${secondaryPreview||"未选择辅色"}</td></tr>${attachmentHtml}</table></body></html>`;
+  download(`${safeName()}_设计需求.xls`,`\ufeff${html}`,"application/vnd.ms-excel;charset=utf-8");
+}
+async function exportImage(){
+  generateBrief();
+  const c=document.createElement("canvas"),w=1240,h=6000,p=88;c.width=w;c.height=h;const g=c.getContext("2d");
+  g.fillStyle="#ffffff";g.fillRect(0,0,w,h);g.fillStyle="#1d4ed8";g.fillRect(0,0,18,h);
+  g.fillStyle="#111827";g.font="700 44px sans-serif";g.fillText("UI 设计需求概览",p,112);
+  g.fillStyle="#6b7280";g.font="18px sans-serif";g.fillText("UI DESIGN BRIEF",p,148);
+  g.textAlign="right";g.fillText(new Date().toLocaleDateString("zh-CN"),w-p,112);g.textAlign="left";
+  g.strokeStyle="#dbe3ef";g.lineWidth=2;g.beginPath();g.moveTo(p,178);g.lineTo(w-p,178);g.stroke();
+  const type=document.getElementById("designType").value;
+  g.fillStyle="#f3f7ff";roundRect(g,p,204,w-p*2,92,14);g.fill();g.fillStyle="#155eef";roundRect(g,p+18,222,190,34,17);g.fill();g.fillStyle="#fff";g.font="700 16px sans-serif";g.fillText(document.getElementById("designType").selectedOptions[0].text,p+34,244);
+  g.fillStyle="#64748b";g.font="15px sans-serif";g.fillText("设计重点",p+232,228);g.fillStyle="#172033";g.font="700 18px sans-serif";drawWrapped(g,val("focus")||val("summary")||"待补充项目重点",p+232,253,680,23);
+  const colorStart=w-p-250;g.fillStyle=val("primaryColor");roundRect(g,colorStart,222,38,38,8);g.fill();secondaryColors().forEach((color,i)=>{g.fillStyle=color;roundRect(g,colorStart+50+i*38,222,30,38,7);g.fill()});g.fillStyle="#64748b";g.font="13px sans-serif";g.textAlign="right";g.fillText(`主色 + ${secondaryColors().length} 个辅色`,w-p,282);g.textAlign="left";
+  const dynamic=configs[type].map((f,i)=>[f[0],dynamicValue(f,i)]);
+  const sections=[
+    ["01  项目基础",[["项目名称",val("projectName")],["产品 / 主题",val("productName")],["所属行业",val("industry")],["设计类型",document.getElementById("designType").selectedOptions[0].text],["项目摘要",val("summary")],["宣传语",val("slogan")]]],
+    ["02  平台与内容",dynamic],
+    ["03  视觉方向",[["整体风格",checked("style")],["页面氛围",val("mood")],["色彩倾向",colorValue()],["版式偏好",val("layout")],["图形风格",val("graphic")],["重点突出",val("focus")]]],
+    ["04  约束与交付",[["适配要求",val("responsive")],["必须遵循",val("constraints")],["明确禁止",val("forbidden")],["AI 输出",checked("outputs")],["参考附件",`${uploadedImages.length} 张图片`],["补充要求",val("outputNotes")]]]
+  ];
+  let y=326;sections.forEach(([title,items])=>{g.fillStyle="#eef3fa";g.fillRect(p,y,w-p*2,42);g.fillStyle="#173b70";g.font="700 20px sans-serif";g.fillText(title,p+16,y+27);y+=56;for(let i=0;i<items.length;i+=2){const left=items[i],right=items[i+1];const rowH=Math.max(measureCell(g,left,455),right?measureCell(g,right,455):58);drawPrintCell(g,left,p,y,455,rowH);if(right)drawPrintCell(g,right,p+520,y,455,rowH);y+=rowH+10}y+=14});
+  if(uploadedImages.length){g.fillStyle="#eef3fa";g.fillRect(p,y,w-p*2,42);g.fillStyle="#173b70";g.font="700 20px sans-serif";g.fillText(`05  参考素材（${uploadedImages.length} 张）`,p+16,y+27);y+=60;const thumbs=await Promise.all(uploadedImages.map(x=>loadCanvasImage(x.data).catch(()=>null)));for(let i=0;i<thumbs.length;i++){const col=i%3,row=Math.floor(i/3),tx=p+col*350,ty=y+row*245;g.fillStyle="#f8fafc";roundRect(g,tx,ty,320,220,12);g.fill();if(thumbs[i])drawCover(g,thumbs[i],tx+8,ty+8,304,168,8);g.fillStyle="#475569";g.font="15px sans-serif";g.fillText(`参考图 ${i+1} · ${truncateText(uploadedImages[i].name,22)}`,tx+10,ty+202)}y+=Math.ceil(thumbs.length/3)*245+18}
+  const finalH=Math.max(1754,Math.min(h,y+130)),out=document.createElement("canvas");out.width=w;out.height=finalH;const o=out.getContext("2d");o.fillStyle="#fff";o.fillRect(0,0,w,finalH);o.drawImage(c,0,0,w,finalH,0,0,w,finalH);o.fillStyle="#1d4ed8";o.fillRect(0,0,18,finalH);o.strokeStyle="#dbe3ef";o.beginPath();o.moveTo(p,finalH-92);o.lineTo(w-p,finalH-92);o.stroke();o.fillStyle="#64748b";o.font="15px sans-serif";o.fillText("由 KBIT UI Design Brief 自动生成 · 已包含本次上传的参考素材",p,finalH-58);o.textAlign="right";o.fillText(`${safeName()}  ·  ${document.getElementById("designType").selectedOptions[0].text}`,w-p,finalH-58);
+  const a=document.createElement("a");a.download=`${safeName()}_需求概览_完整长图.png`;a.href=out.toDataURL("image/png");a.click();
+}
+function roundRect(x,a,b,w,h,r){x.beginPath();x.roundRect(a,b,w,h,r)}
+function wrapLines(x,text,max){const lines=[];String(text).split("\n").forEach(paragraph=>{let cur="";for(const ch of paragraph){if(cur&&x.measureText(cur+ch).width>max){lines.push(cur);cur=ch}else cur+=ch}lines.push(cur||" ")});return lines}
+function drawWrapped(x,text,a,b,max,line){const lines=wrapLines(x,text,max);lines.forEach((t,i)=>x.fillText(t,a,b+i*line));return b+(lines.length-1)*line}
+function measureCell(g,item,width){g.font="19px sans-serif";const lines=wrapLines(g,item?.[1]||"—",width-28).length;return Math.max(58,38+lines*25)}
+function drawPrintCell(g,item,x,y,w,h){g.strokeStyle="#e2e8f0";g.lineWidth=1;g.strokeRect(x,y,w,h);g.fillStyle="#64748b";g.font="15px sans-serif";g.fillText(item[0],x+14,y+22);g.fillStyle="#111827";g.font="19px sans-serif";drawWrapped(g,item[1]||"—",x+14,y+48,w-28,25)}
+function loadCanvasImage(src){return new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=reject;img.src=src})}
+function drawCover(g,img,x,y,w,h,r){g.save();roundRect(g,x,y,w,h,r);g.clip();const scale=Math.max(w/img.width,h/img.height),dw=img.width*scale,dh=img.height*scale;g.drawImage(img,x+(w-dw)/2,y+(h-dh)/2,dw,dh);g.restore()}
+function truncateText(text,max){return text.length>max?text.slice(0,max-1)+"…":text}
+function formData(){const data={};document.querySelectorAll("input:not([type=file]),select,textarea").forEach(e=>{if(e.type==="checkbox")data[e.id||e.value]=e.checked;else if(e.id)data[e.id]=e.value});return data}
+function saveDraft(){try{localStorage.setItem("uiBriefDraft",JSON.stringify({fields:formData(),images:uploadedImages,customSizes,selectedSizeValues:selectedSizes()}))}catch(e){}}
+function restoreDraft(){try{const d=JSON.parse(localStorage.getItem("uiBriefDraft"));if(!d)return;customSizes=d.customSizes||[];sizeSelections=new Set(d.selectedSizeValues||[]);Object.entries(d.fields||{}).forEach(([k,v])=>{const e=document.getElementById(k)||[...document.querySelectorAll('input[type=checkbox]')].find(x=>x.value===k);if(e){if(e.type==="checkbox")e.checked=v;else e.value=v}});renderDynamicFields();Object.entries(d.fields||{}).forEach(([k,v])=>{const e=document.getElementById(k)||[...document.querySelectorAll('input[type=checkbox]')].find(x=>x.value===k);if(e){if(e.type==="checkbox")e.checked=v;else e.value=v}});uploadedImages=d.images||[];renderPreviews();toggleOtherStyle();renderColorPalettes();syncCustomSelects();updateSizeSummary()}catch(e){}}
+function clearForm(){if(!confirm("确定清空所有内容和本机草稿吗？"))return;document.getElementById("uiForm").reset();uploadedImages=[];customSizes=[];sizeSelections=new Set();localStorage.removeItem("uiBriefDraft");renderDynamicFields();renderPreviews();renderColorPalettes();syncCustomSelects();updateFormUI();document.getElementById("output").textContent="填写表单后点击“生成 AI 设计任务包”。"}
+function fillDemo(){
+  if(!confirm("将使用模拟数据覆盖当前已填写内容，是否继续？"))return;
+  document.getElementById("uiForm").reset();uploadedImages=[];renderPreviews();
+  const demo={projectName:"拍在云南影视服务平台 H5 优化",productName:"拍在云南@昆明影视服务数据资源中心",slogan:"全面了解云南，快捷选取服务，轻松开启拍摄",summary:"面向来滇影视剧组、制片机构与影视从业者的一站式移动端服务平台，集中提供外景地、影视企业、案例、演职人员、配套服务、政策资讯、业务申请与预约管理。",industry:"媒体",designType:"h5",mood:"专业、开放、具有云南地域辨识度与影视行业质感",primaryColor:"#007aff",secondaryColor:"#ffbe00,#e64340,#f5f1e8",color:"主色用于导航、按钮与链接；黄色用于重点推荐，红色用于重要状态，米白用于内容背景",layout:"移动端信息门户结构，首页视觉引导与快捷服务入口前置，列表卡片清晰，底部导航固定",graphic:"简洁线性功能图标，结合云南外景摄影与影视制作场景图片",focus:"外景地资源、影视服务分类、政策资讯、在线申请与预约入口",references:"现有项目：https://yun.rmt.kmzscc.com/h5/film-service/index.html#/",referenceFocus:"保留现有业务栏目和服务路径，优化首页层级、列表信息密度、详情页阅读体验与统一状态反馈",avoidReference:"不照搬旧页面间距与组件样式，不增加与影视服务无关的文旅电商元素",constraints:"保留首页、服务、政策、我的四个底部导航及现有业务功能；适配微信内置浏览器",responsive:"移动端 375×812 为主要设计基准，兼容 320～430px 宽度与全面屏安全区",assets:"现有品牌名称、栏目数据、外景地与影视案例图片、政策内容",forbidden:"避免娱乐化追星风格、过度炫技动效、低对比度文字和密集小字号",outputNotes:"优先生成首页、服务聚合页、外景地列表与详情、政策列表、业务申请、预约记录、我的页面；覆盖加载、空、错误、未登录、提交成功状态。"};
+  Object.entries(demo).forEach(([id,value])=>{const e=document.getElementById(id);if(e)e.value=value});renderDynamicFields();
+  const demoDynamic=["移动端影视服务数据资源平台","首页、服务、政策、我的；首页为默认入口","影视企业、外景地、影视案例、演职人员、服务机构、资讯文章","进入首页 → 搜索或选择服务 → 查看列表与详情 → 登录 → 提交申请或预约 → 在我的页面查询进度","手机号 / 验证码登录；我的申请、我的收藏、我的预约、个人资料","微信分享、地图选点与位置导航、电话联系、外部网页","加载、内容为空、网络错误、未登录、申请提交成功、预约成功或取消"];let demoIndex=0;configs.h5.forEach((f,i)=>{if(f[1]!=="sizepicker")document.getElementById("dynamic_"+i).value=demoDynamic[demoIndex++]});
+  ["390×844 iPhone 13/14","393×852 iPhone Pro","430×932 Pro Max","750×1624 全面屏设计稿"].forEach(v=>sizeSelections.add(v));renderSizeOptions();
+  ["现代简约","年轻化","高级感"].forEach(v=>{const e=[...document.querySelectorAll('[data-group="style"] input')].find(x=>x.value===v);if(e)e.checked=true});
+  ["design.md","项目需求理解","信息架构 IA","页面清单","用户流程","Design Token","组件清单","高保真效果图Prompt","验收要点"].forEach(v=>{const e=[...document.querySelectorAll('[data-group="outputs"] input')].find(x=>x.value===v);if(e)e.checked=true});
+  toggleOtherStyle();renderColorPalettes();syncCustomSelects();updateSizeSummary();generateBrief();saveDraft();updateFormUI();window.scrollTo({top:0,behavior:"smooth"});
+}
+function updateFormUI(){
+  const fields=[...document.querySelectorAll('#uiForm input:not([type="checkbox"]):not([type="file"]):not([type="hidden"]),#uiForm select,#uiForm textarea')].filter(e=>e.offsetParent!==null);
+  fields.forEach(e=>e.classList.toggle("has-value",!!e.value.trim()));
+  const filled=fields.filter(e=>e.value.trim()).length;
+  const groups=["style","outputs"],groupFilled=groups.filter(g=>document.querySelector(`[data-group="${g}"] input:checked`)).length;
+  const percent=Math.min(100,Math.round((filled+groupFilled)/(fields.length+groups.length)*100));
+  document.getElementById("progressBar").style.width=percent+"%";document.getElementById("progressText").textContent=`已填写 ${percent}%`;
+  const active=Math.min(3,Math.floor(percent/25));document.querySelectorAll(".step").forEach((s,i)=>s.classList.toggle("active",i<=active));
+  document.querySelectorAll("textarea").forEach(e=>{e.style.height="auto";e.style.height=Math.max(92,e.scrollHeight)+"px"});
+}
+document.getElementById("uiForm").addEventListener("input",()=>{saveDraft();updateFormUI()});document.getElementById("uiForm").addEventListener("change",updateFormUI);restoreDraft();updateFormUI();
+</script>
+</body>
+</html>
